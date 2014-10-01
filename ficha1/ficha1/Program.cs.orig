@@ -7,25 +7,27 @@ using RestSharp;
 
 namespace ficha1
 {
-    // c419d1442700aa09acec38622f6dbceca73b74af 
     class Program
     {
         static int Main(string[] args)
         {
+<<<<<<< HEAD
+            var client = new RestClient("http://github.com");
+            // client.Authenticator = new HttpBasicAuthenticator(username, password);
 
-            if (args.Length < 1)
-            {
-                Console.WriteLine("Falta Organizacao");
-                return 1;
-            }
+            var request = new RestRequest("resource/{id}", Method.GET);
+            request.AddParameter("name", "value"); // adds to POST or URL querystring based on Method
+            request.AddUrlSegment("id", 123); // replaces matching token in request.Resource
 
-            var client = new RestClient("http://api.github.com/");
-            //client.Authenticator = new HttpBasicAuthenticator(username, password);
-            
+=======
+            var client = new RestClient("http://api.github.com");
+            // client.Authenticator = new HttpBasicAuthenticator(username, password);
+
             var request = new RestRequest("orgs/" + args[0]+ "/repos", Method.GET);
+>>>>>>> 327144995c8f9659e1bee4bfeaae45cca7a65bf6
             // easily add HTTP Headers
             request.AddHeader("Host", "api.github.com");
-            
+
             RestResponse response3 = (RestResponse) client.Execute(request);
             Console.WriteLine(response3.Content);
             // or automatically deserialize result

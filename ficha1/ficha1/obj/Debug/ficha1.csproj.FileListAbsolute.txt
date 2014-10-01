@@ -1,1 +1,9 @@
 C:\Users\PEDRO\Documents\LEIC\PI\ficha1\ficha1\ficha1\bin\Debug\ficha1.exe.config
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\ficha1\bin\Debug\ficha1.exe.config
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\ficha1\obj\Debug\ficha1.csprojResolveAssemblyReference.cache
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\ficha1\bin\Debug\ficha1.exe
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\ficha1\bin\Debug\ficha1.pdb
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\ficha1\bin\Debug\RestSharp.dll
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\ficha1\bin\Debug\RestSharp.xml
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\ficha1\obj\Debug\ficha1.exe
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\ficha1\obj\Debug\ficha1.pdb

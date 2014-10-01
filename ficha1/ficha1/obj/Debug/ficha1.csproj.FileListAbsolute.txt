@@ -1,1 +1,2 @@
 C:\Users\PEDRO\Documents\LEIC\PI\ficha1\ficha1\ficha1\bin\Debug\ficha1.exe.config
+C:\Users\PEDRO\Documents\LEIC\PI\ficha1\rep\PI1415\ficha1\ficha1\bin\Debug\ficha1.exe.config

@@ -11,10 +11,10 @@ namespace ficha1
     {
         static void Main(string[] args)
         {
-            var client = new RestClient("http://thoth.cc.e.ipl.pt");
+            var client = new RestClient("http://github.com");
             // client.Authenticator = new HttpBasicAuthenticator(username, password);
 
-            var request = new RestRequest("resource/{id}", Method.POST);
+            var request = new RestRequest("resource/{id}", Method.GET);
             request.AddParameter("name", "value"); // adds to POST or URL querystring based on Method
             request.AddUrlSegment("id", 123); // replaces matching token in request.Resource
 

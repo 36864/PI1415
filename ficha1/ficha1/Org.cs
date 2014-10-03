@@ -6,10 +6,15 @@ using System.Threading.Tasks;
 
 namespace ficha1
 {
-    class Repo
+    class Org
     {
         public string Name { get; set; }
-        public string Language { get; set; }
-        public string Collaborators_url { get; set; }
+        public string Location { get; set; }
+        public List<Repo> Repos { get; set; }
+
+        public Org()
+        {
+            Repos = new List<Repo>();
+        }
     }
 }

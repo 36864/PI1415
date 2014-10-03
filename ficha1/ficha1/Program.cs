@@ -7,7 +7,7 @@ using RestSharp;
 
 namespace ficha1
 {
-    // c419d1442700aa09acec38622f6dbceca73b74af 
+    // c419d1442700aa09acec38622f6dbceca73b74af token
     class Program
     {
         static int Main(string[] args)
@@ -19,17 +19,19 @@ namespace ficha1
                 return 1;
             }
 
-            var client = new RestClient("http://api.github.com/");
-            //client.Authenticator = new HttpBasicAuthenticator(username, password);
-            
+            var client = new RestClient("https://api.github.com/");
+           
             var request = new RestRequest("orgs/" + args[0]+ "/repos", Method.GET);
+
             // easily add HTTP Headers
-            request.AddHeader("Host", "api.github.com");
+            //request.AddHeader("Host", "api.github.com");
             
-            RestResponse response3 = (RestResponse) client.Execute(request);
+            var response3 = client.Execute(request);
+            //RestResponse 
             Console.WriteLine(response3.Content);
             // or automatically deserialize result
             // return content type is sniffed but can be explicitly set via RestClient.AddHandler();
+
             RestResponse<Repo> response2 = (RestResponse<Repo>) client.Execute<Repo>(request);
             //var name = response2.Data.Name;
 

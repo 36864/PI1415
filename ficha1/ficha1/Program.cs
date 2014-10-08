@@ -44,7 +44,6 @@ namespace ficha1
                 for (int i = (int)p; i > 0; i-- )
                     lineHist += '*';
                 
-                //lineHist = lineHist.PadRight((lineHist.Length - (int)p) + (int)maxP, ' ');
                 lineHist = lineHist.PadRight((lineHist.Length - (int)p) + biggerAster, ' ');
                 formRep=lang.Value/10==0 ? " " : "";
                 formP = (int)p / 10 == 0 ? " " : "";
@@ -63,13 +62,13 @@ namespace ficha1
         {
             foreach (Collab collab in deserializer.Deserialize<List<Collab>>(source))
             {
-                if (collabs.ContainsKey(collab.ID))
+                if (collabs.ContainsKey(collab.Login))
                 {
-                    ++collabs[collab.ID];
+                    ++collabs[collab.Login];
                 }
                 else
                 {
-                    collabs.Add(collab.ID, 1);
+                    collabs.Add(collab.Login, 1);
                 }
             }
         }

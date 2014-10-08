@@ -8,7 +8,7 @@ namespace ficha1
 {
     class Collab
     {
-        public string ID { get; set; }
+        public string Login { get; set; }
         
         
     }

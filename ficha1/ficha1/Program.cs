@@ -12,6 +12,48 @@ namespace ficha1
     class Program
     {
 
+        static int biggerName=0;
+        static int biggerAster = 45;
+        static int total = 0;
+
+
+        static void preDraw(Dictionary<string, int> m)
+        {
+       
+            foreach (KeyValuePair<string, int> lang in m)
+            {
+                total += lang.Value;
+                if (biggerName < lang.Key.Length)
+                    biggerName = lang.Key.Length;         
+            }
+        }
+
+
+        static void drawHist(Dictionary<string, int> m)
+        {
+            preDraw(m);
+            biggerAster =Console.BufferWidth - biggerName - 23;
+            string lineHist="";
+
+            double p = 0.0, maxP=((double)biggerAster / total) * 100;
+            string formRep, formP;
+            foreach (KeyValuePair<string, int> lang in m)
+            {
+                p = ((double)lang.Value / total) * 100;
+                lineHist = lang.Key.PadRight(biggerName, ' ')+": ";
+                for (int i = (int)p; i > 0; i-- )
+                    lineHist += '*';
+                
+                //lineHist = lineHist.PadRight((lineHist.Length - (int)p) + (int)maxP, ' ');
+                lineHist = lineHist.PadRight((lineHist.Length - (int)p) + biggerAster, ' ');
+                formRep=lang.Value/10==0 ? " " : "";
+                formP = (int)p / 10 == 0 ? " " : "";
+                //Console.WriteLine(p);
+                lineHist += " ( "+ formP + String.Format("{0:0.0}", p) + "%, " + lang.Value + formRep + " repos)";
+                Console.WriteLine(lineHist);
+            }
+        } 
+
         static void addRepos (List<Repo> list, IRestResponse source, IDeserializer deserializer){
             //adicionar repositórios a lista
             list.AddRange(deserializer.Deserialize<List<Repo>>(source));
@@ -69,6 +111,8 @@ namespace ficha1
             //adicionar repositórios à lista
             addRepos(org.Repos, response, jsdes);
 
+            Console.WriteLine(org.Name + "(" + org.Location + ")");
+            Console.WriteLine("".PadRight(80,'-'));
             //verificar paginação, pedir restantes repositórios de forma síncrona se existentes
             if (linkheader != null)
             {
@@ -105,38 +149,18 @@ namespace ficha1
                 //pedir lista de collaboradores, adicionar ao dicionário, decrementar contador
                 client.ExecuteAsync(request, collabResponse => { addCollabs(collabs, collabResponse, jsdes); --repoCount; });
             }
-
-
+            
+            languages = languages.OrderBy(c => c.Key).ToDictionary(t => t.Key, t => t.Value);
+            
             while (org.Name == null || repoCount != 0) ; //esperar por chamadas async, se necessário
-
-            Console.WriteLine(org.Name + "(" + org.Location + ")");
-            foreach (var item in languages)
-            {
-                Console.WriteLine(item.Key + " - " + item.Value);
-            }
-            Console.WriteLine("----------------------------------------");
-            foreach (var item in collabs)
-            {
-                Console.WriteLine(item.Key + " - " + item.Value);
-            }
-            // easy async support
-       //     client.ExecuteAsync(request, response =>
-            //{
-                //Console.WriteLine(response.Content);
-            //});
-
-            // async with deserialization
-            //var asyncHandle = client.ExecuteAsync<Person>(request, response =>
-            //{
-                //Console.WriteLine(response.Data.Name);
-            //});
-
-            // abort the request on demand
-            //asyncHandle.Abort();
+            
+            drawHist(languages);
+            Console.WriteLine();
+            Console.WriteLine("".PadRight(80, '-'));
+            drawHist(collabs);
+            
             Console.Read();
             return 0;
         }
-
-    
     }
 }

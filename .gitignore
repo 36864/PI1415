@@ -8,3 +8,5 @@ ficha1/ficha1.v12.suo
 *.exe
 *.pdb
 *.cache
+*.suo
+*.sln

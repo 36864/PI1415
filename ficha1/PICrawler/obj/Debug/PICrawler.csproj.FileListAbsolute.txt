@@ -1,0 +1,11 @@
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\PICrawler\bin\Debug\PICrawler.exe.config
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\PICrawler\bin\Debug\PICrawler.exe
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\PICrawler\bin\Debug\PICrawler.pdb
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\PICrawler\bin\Debug\HtmlAgilityPack.dll
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\PICrawler\bin\Debug\HtmlAgilityPack.pdb
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\PICrawler\bin\Debug\HtmlAgilityPack.xml
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\PICrawler\obj\Debug\PICrawler.csprojResolveAssemblyReference.cache
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\PICrawler\obj\Debug\PICrawler.exe
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\PICrawler\obj\Debug\PICrawler.pdb
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\PICrawler\bin\Debug\RestSharp.dll
+C:\Users\Atum\Documents\ISEL\PI\PI1415\ficha1\PICrawler\bin\Debug\RestSharp.xml

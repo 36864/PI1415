@@ -10,6 +10,7 @@ namespace ficha1
     {
         public string Name { get; set; }
         public string Language { get; set; }
-        public string Collaborators_url { get; set; }
+        private string collaborators_url;
+        public string Collaborators_url { get { return collaborators_url.Replace("{/collaborator}", "").Replace("https://api.github.com", ""); } set { collaborators_url = value; } }
     }
 }

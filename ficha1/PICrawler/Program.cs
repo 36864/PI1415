@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ficha1
+namespace PICrawler
 {
-    class Collab
+    class Program
     {
-        public string ID { get; set; }
-        
-        
+        static void Main(string[] args)
+        {
+        }
     }
 }

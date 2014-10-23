@@ -176,9 +176,7 @@ namespace ficha1
         {
             HtmlDocument doc = new HtmlDocument();
             doc.Load(BASEHTML);           
-            HtmlNode header = HtmlNode.CreateNode("<h1>" + p + "</h1>");
-            doc.DocumentNode.ChildNodes.FindFirst("body").PrependChild(header);
-            
+                        
         }
     }
 }

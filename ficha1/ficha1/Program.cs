@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 using RestSharp;
 using RestSharp.Deserializers;
 namespace ficha1
@@ -51,7 +52,97 @@ namespace ficha1
                 lineHist += " ( "+ formP + String.Format("{0:0.0}", p) + "%, " + lang.Value + formRep + " repos)";
                 Console.WriteLine(lineHist);
             }
-        } 
+        }
+
+
+       static void genHist(StreamWriter file, Dictionary<string, int> m)
+        {
+           file.WriteLine("<table class=\"table\">");
+                file.WriteLine("<tr section =\"#tr\">");
+                file.WriteLine("<td>");
+                file.WriteLine("<div>");
+                file.WriteLine("<ul>");
+
+                foreach (KeyValuePair<string, int> kv in m)
+                {
+                    file.WriteLine("<p><li>" + kv.Key + " : </li></p>");
+                }
+                file.WriteLine("</ul>");
+                file.WriteLine("</div>");
+                file.WriteLine("</td>");
+                file.WriteLine("<td>");
+                file.WriteLine("<div>");
+                //file.WriteLine("<ul>");
+                foreach (KeyValuePair<string, int> kv in m)
+                {
+                    file.Write("<p>");
+                    for (int i = kv.Value; i > 0; i--)
+                    {
+                        file.Write("*");
+                    }
+                    file.WriteLine("</p>");
+                }
+               // file.WriteLine("</div>");
+                file.WriteLine("</div>");
+                file.WriteLine("</td>");
+                file.WriteLine("</tr>");
+               // file.WriteLine("<tr section =\"#tr\"><td>Languages of Organization</td><td></td></tr>");
+                file.WriteLine("</table>");
+        }
+
+       static void generateHtml(string org, Dictionary<string, int> lang, Dictionary<string, int> cs)
+       {
+            using (StreamWriter file = new StreamWriter(@"org.html", false))
+            {
+                file.WriteLine("<!DocType HTML><head><meta charset=\"UTF-8\" /><title>" + org + "</title></head>");
+                file.WriteLine("<link rel=\"stylesheet\" href=\"assets/bootstrap-3.2.0-dist/css/bootstrap.min.css\"/>");
+                file.WriteLine("<body>");
+                file.WriteLine("<div><span class = \"text-center text-uppercase text-info\"><h2>" + org + "</h2></span></div>");
+               // file.WriteLine("<div>");
+                genHist(file, lang);
+                file.WriteLine("<div><span class = \"text-left text-uppercase text-info\"><h3>Languages of Org</h3></span></div>");
+                genHist(file, cs);
+                file.WriteLine("<div><span class = \"text-left text-uppercase text-info\"><h3>Collabs of an Org</h3></span></div>");
+               /* file.WriteLine("<table class=\"table\">");
+                file.WriteLine("<tr section =\"#tr\">");
+                file.WriteLine("<td>");
+                file.WriteLine("<div>");
+                file.WriteLine("<ul>");
+
+                foreach (KeyValuePair<string, int> kv in lang)
+                {
+                    file.WriteLine("<p><li>" + kv.Key + " : </li></p>");
+                }
+                file.WriteLine("</ul>");
+                file.WriteLine("</div>");
+                file.WriteLine("</td>");
+                file.WriteLine("<td>");
+                file.WriteLine("<div>");
+                //file.WriteLine("<ul>");
+                foreach (KeyValuePair<string, int> kv in lang)
+                {
+                    file.Write("<p>");
+                    for (int i = kv.Value; i > 0; i--)
+                    {
+                        file.Write("*");
+                    }
+                    file.WriteLine("</p>");
+                }
+               // file.WriteLine("</div>");
+                file.WriteLine("</div>");
+                file.WriteLine("</td>");
+                file.WriteLine("</tr>");
+                file.WriteLine("<tr section =\"#tr\"><td>Languages of Organization</td><td></td></tr>");
+                file.WriteLine("</table>");*/
+                file.WriteLine("</body>");
+                file.WriteLine("</html>");
+            }
+        }
+
+       static void pageforcollabs(Dictionary<string, int> cs)
+       {
+
+       }
 
         static void addRepos (List<Repo> list, IRestResponse source, IDeserializer deserializer){
             //adicionar repositórios a lista
@@ -152,7 +243,9 @@ namespace ficha1
             languages = languages.OrderBy(c => c.Key).ToDictionary(t => t.Key, t => t.Value);
             
             while (org.Name == null || repoCount != 0) ; //esperar por chamadas async, se necessário
-            
+
+            generateHtml(args[0], languages, collabs);
+
             drawHist(languages);
             Console.WriteLine();
             Console.WriteLine("".PadRight(80, '-'));

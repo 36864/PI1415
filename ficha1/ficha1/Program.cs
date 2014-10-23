@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using RestSharp;
 using RestSharp.Deserializers;
+using HtmlAgilityPack;
 namespace ficha1
 {
     // c419d1442700aa09acec38622f6dbceca73b74af token
@@ -13,19 +14,19 @@ namespace ficha1
     class Program
     {
 
-        static int biggerName=0;
-        static int biggerAster = 45;
-        static int total = 0;
-
+        static int BIGGERNAME=0;
+        static int BIGGERASTER = 45;
+        static int TOTAL = 0;
+        static string BASEHTML = "base.html";
 
         static void preDraw(Dictionary<string, int> m)
         {
        
             foreach (KeyValuePair<string, int> lang in m)
             {
-                total += lang.Value;
-                if (biggerName < lang.Key.Length)
-                    biggerName = lang.Key.Length;         
+                TOTAL += lang.Value;
+                if (BIGGERNAME < lang.Key.Length)
+                    BIGGERNAME = lang.Key.Length;         
             }
         }
 
@@ -33,19 +34,19 @@ namespace ficha1
         static void drawHist(Dictionary<string, int> m)
         {
             preDraw(m);
-            biggerAster =Console.BufferWidth - biggerName - 23;
+            BIGGERASTER =Console.BufferWidth - BIGGERNAME - 23;
             string lineHist="";
 
-            double p = 0.0, maxP=((double)biggerAster / total) * 100;
+            double p = 0.0, maxP=((double)BIGGERASTER / TOTAL) * 100;
             string formRep, formP;
             foreach (KeyValuePair<string, int> lang in m)
             {
-                p = ((double)lang.Value / total) * 100;
-                lineHist = lang.Key.PadRight(biggerName, ' ')+": ";
+                p = ((double)lang.Value / TOTAL) * 100;
+                lineHist = lang.Key.PadRight(BIGGERNAME, ' ')+": ";
                 for (int i = (int)p; i > 0; i-- )
                     lineHist += '*';
                 
-                lineHist = lineHist.PadRight((lineHist.Length - (int)p) + biggerAster, ' ');
+                lineHist = lineHist.PadRight((lineHist.Length - (int)p) + BIGGERASTER, ' ');
                 formRep=lang.Value/10==0 ? " " : "";
                 formP = (int)p / 10 == 0 ? " " : "";
                 //Console.WriteLine(p);
@@ -54,90 +55,6 @@ namespace ficha1
             }
         }
 
-
-       static void genHist(StreamWriter file, Dictionary<string, int> m)
-        {
-           file.WriteLine("<table class=\"table\">");
-                file.WriteLine("<tr section =\"#tr\">");
-                file.WriteLine("<td>");
-                file.WriteLine("<div>");
-                file.WriteLine("<ul>");
-
-                foreach (KeyValuePair<string, int> kv in m)
-                {
-                    file.WriteLine("<p><li>" + kv.Key + " : </li></p>");
-                }
-                file.WriteLine("</ul>");
-                file.WriteLine("</div>");
-                file.WriteLine("</td>");
-                file.WriteLine("<td>");
-                file.WriteLine("<div>");
-                //file.WriteLine("<ul>");
-                foreach (KeyValuePair<string, int> kv in m)
-                {
-                    file.Write("<p>");
-                    for (int i = kv.Value; i > 0; i--)
-                    {
-                        file.Write("*");
-                    }
-                    file.WriteLine("</p>");
-                }
-               // file.WriteLine("</div>");
-                file.WriteLine("</div>");
-                file.WriteLine("</td>");
-                file.WriteLine("</tr>");
-               // file.WriteLine("<tr section =\"#tr\"><td>Languages of Organization</td><td></td></tr>");
-                file.WriteLine("</table>");
-        }
-
-       static void generateHtml(string org, Dictionary<string, int> lang, Dictionary<string, int> cs)
-       {
-            using (StreamWriter file = new StreamWriter(@"org.html", false))
-            {
-                file.WriteLine("<!DocType HTML><head><meta charset=\"UTF-8\" /><title>" + org + "</title></head>");
-                file.WriteLine("<link rel=\"stylesheet\" href=\"assets/bootstrap-3.2.0-dist/css/bootstrap.min.css\"/>");
-                file.WriteLine("<body>");
-                file.WriteLine("<div><span class = \"text-center text-uppercase text-info\"><h2>" + org + "</h2></span></div>");
-               // file.WriteLine("<div>");
-                genHist(file, lang);
-                file.WriteLine("<div><span class = \"text-left text-uppercase text-info\"><h3>Languages of Org</h3></span></div>");
-                genHist(file, cs);
-                file.WriteLine("<div><span class = \"text-left text-uppercase text-info\"><h3>Collabs of an Org</h3></span></div>");
-               /* file.WriteLine("<table class=\"table\">");
-                file.WriteLine("<tr section =\"#tr\">");
-                file.WriteLine("<td>");
-                file.WriteLine("<div>");
-                file.WriteLine("<ul>");
-
-                foreach (KeyValuePair<string, int> kv in lang)
-                {
-                    file.WriteLine("<p><li>" + kv.Key + " : </li></p>");
-                }
-                file.WriteLine("</ul>");
-                file.WriteLine("</div>");
-                file.WriteLine("</td>");
-                file.WriteLine("<td>");
-                file.WriteLine("<div>");
-                //file.WriteLine("<ul>");
-                foreach (KeyValuePair<string, int> kv in lang)
-                {
-                    file.Write("<p>");
-                    for (int i = kv.Value; i > 0; i--)
-                    {
-                        file.Write("*");
-                    }
-                    file.WriteLine("</p>");
-                }
-               // file.WriteLine("</div>");
-                file.WriteLine("</div>");
-                file.WriteLine("</td>");
-                file.WriteLine("</tr>");
-                file.WriteLine("<tr section =\"#tr\"><td>Languages of Organization</td><td></td></tr>");
-                file.WriteLine("</table>");*/
-                file.WriteLine("</body>");
-                file.WriteLine("</html>");
-            }
-        }
 
        static void pageforcollabs(Dictionary<string, int> cs)
        {
@@ -253,6 +170,13 @@ namespace ficha1
             
             Console.Read();
             return 0;
+        }
+
+        private static void generateHtml(string p, Dictionary<string, int> languages, Dictionary<string, int> collabs)
+        {
+            HtmlDocument doc = new HtmlDocument();
+            doc.Load(BASEHTML);           
+                        
         }
     }
 }

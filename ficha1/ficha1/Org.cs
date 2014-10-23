@@ -10,6 +10,8 @@ namespace ficha1
     {
         public string Name { get; set; }
         public string Location { get; set; }
+        public string Avatar_URL { get; set; }
+        public string Repos_URL { get; set; }
         public List<Repo> Repos { get; set; }
 
         public Org()

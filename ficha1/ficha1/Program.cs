@@ -13,60 +13,20 @@ namespace ficha1
     //6cc637fc4c44405fab41ea4f837cef12d5bb9996
     class Program
     {
+        static string BASE_URL = "https://api.github.com/";
+        
+        static string BASE_HTML_ORG = "../../base_org.html";
+        static string BASE_HTML_INDEX = "../../base_index.html";
+        static string BASE_HTML_COLLAB = "../../base_collab.html";
+        
+        static int TOTAL_LANG = 0, TOTAL_COLLAB = 0;
 
-        static int BIGGERNAME=0;
-        static int BIGGERASTER = 45;
-        static int TOTAL = 0;
-        static string BASEHTML = "base.html";
-
-        static void preDraw(Dictionary<string, int> m)
-        {
-       
-            foreach (KeyValuePair<string, int> lang in m)
-            {
-                TOTAL += lang.Value;
-                if (BIGGERNAME < lang.Key.Length)
-                    BIGGERNAME = lang.Key.Length;         
-            }
-        }
-
-
-        static void drawHist(Dictionary<string, int> m)
-        {
-            preDraw(m);
-            BIGGERASTER =Console.BufferWidth - BIGGERNAME - 23;
-            string lineHist="";
-
-            double p = 0.0, maxP=((double)BIGGERASTER / TOTAL) * 100;
-            string formRep, formP;
-            foreach (KeyValuePair<string, int> lang in m)
-            {
-                p = ((double)lang.Value / TOTAL) * 100;
-                lineHist = lang.Key.PadRight(BIGGERNAME, ' ')+": ";
-                for (int i = (int)p; i > 0; i-- )
-                    lineHist += '*';
-                
-                lineHist = lineHist.PadRight((lineHist.Length - (int)p) + BIGGERASTER, ' ');
-                formRep=lang.Value/10==0 ? " " : "";
-                formP = (int)p / 10 == 0 ? " " : "";
-                //Console.WriteLine(p);
-                lineHist += " ( "+ formP + String.Format("{0:0.0}", p) + "%, " + lang.Value + formRep + " repos)";
-                Console.WriteLine(lineHist);
-            }
-        }
-
-
-       static void pageforcollabs(Dictionary<string, int> cs)
-       {
-
-       }
-
-        static void addRepos (List<Repo> list, IRestResponse source, IDeserializer deserializer){
+        static void AddRepos (List<Repo> list, IRestResponse source, IDeserializer deserializer){
             //adicionar repositórios a lista
             list.AddRange(deserializer.Deserialize<List<Repo>>(source));
         }
 
-        static void addCollabs(Dictionary<string, int> collabs, IRestResponse source, IDeserializer deserializer)
+        static void AddCollabs(Dictionary<string, int> collabs, IRestResponse source, IDeserializer deserializer)
         {
             foreach (Collab collab in deserializer.Deserialize<List<Collab>>(source))
             {
@@ -78,6 +38,7 @@ namespace ficha1
                 {
                     collabs.Add(collab.Login, 1);
                 }
+                ++TOTAL_COLLAB;
             }
         }
 
@@ -90,60 +51,35 @@ namespace ficha1
                 return 1;
             }
 
-            var client = new RestClient("https://api.github.com/");
-           
-            var request = new RestRequest("orgs/" + args[0], Method.GET);
-
-            // easily add HTTP Headers
-            request.AddHeader("host", "api.github.com");
-            request.AddHeader("User-Agent", "36864");
-            request.AddHeader("Authorization", "token 6cc637fc4c44405fab41ea4f837cef12d5bb9996");
-
-            //criar estruturas
+            RestClient client = new RestClient(BASE_URL);
             Org org = new Org();
-            RestSharp.Deserializers.JsonDeserializer jsdes = new RestSharp.Deserializers.JsonDeserializer();
+            JsonDeserializer jsdes = new JsonDeserializer();
 
-            //pedir info da organizacao (async, só necessário para apresentação no fim)
-            client.ExecuteAsync<Org>(request, orgResponse =>
-                {
-                    org = jsdes.Deserialize<Org>(orgResponse);
-                });
 
-            //pedir lista de repositorios (sync, necessário antes de tentar obter lista de colaboradores)
-            request.Resource += "/repos";
-            IRestResponse response = client.Execute(request);
+            RestRequest orgRequest = new RestRequest("orgs/" + args[0]);
+            AddRequestHeaders(orgRequest);
+            HttpHelper orgHelper = new HttpHelper(client, orgRequest, response => org = jsdes.Deserialize<Org>(response));
+            orgHelper.ExecuteRequest();
+            while (!orgHelper.IsDone) ;
 
-            //obter paginação
-            Parameter linkheader = response.Headers.First(a => a.Name == "Link");
-            //adicionar repositórios à lista
-            addRepos(org.Repos, response, jsdes);
+            Console.WriteLine("Got " + org.Name + " info.");
+            Console.WriteLine("Getting repos for " + org.Name);
+            RestRequest repoRequest = new RestRequest(org.Repos_URL);
+            AddRequestHeaders(repoRequest);
+            HttpHelper repoHelper = new HttpHelper(client, repoRequest, response => AddRepos(org.Repos, response, jsdes));
+            repoHelper.ExecuteRequest();
+            while (!repoHelper.IsDone) ;
+            Console.WriteLine("Got " + org.Name + " repos.");
 
-            Console.WriteLine(org.Name + "(" + org.Location + ")");
-            Console.WriteLine("".PadRight(80,'-'));
-            //verificar paginação, pedir restantes repositórios de forma síncrona se existentes
-            if (linkheader != null)
-            {
-                string linkval = linkheader.Value.ToString();
-                while (linkval.Contains("next"))
-                {
-                    string nextURI = linkval.Substring(linkval.IndexOf('?'),linkval.Length - linkval.IndexOf('>'));
-                    request.Resource = "orgs/" + args[0] + "/repos" + nextURI;
-                    response = client.Execute(request);
-                    addRepos(org.Repos, response, jsdes);
-                    linkheader = response.Headers.First(a => a.Name == "Link");
-                    linkval = linkheader.Value.ToString();
-                }
-            }
             
-            Dictionary<string, int> languages = new Dictionary<string,int>();
+            Dictionary<string, int> languages = new Dictionary<string, int>();
             Dictionary<string, int> collabs = new Dictionary<string, int>();
-            int repoCount = 0;
 
+            List<HttpHelper> collabHelpers = new List<HttpHelper>();
+
+            //Construir lista de linguagens
             foreach (Repo repo in org.Repos)
             {
-                ++repoCount;
-                if (repo.Language == null)
-                    repo.Language = "";
                 if (!languages.ContainsKey(repo.Language))
                 {
                     languages.Add(repo.Language, 1);
@@ -152,31 +88,70 @@ namespace ficha1
                 {
                     ++languages[repo.Language];
                 }
-                request.Resource = repo.Collaborators_url;
-                //pedir lista de collaboradores, adicionar ao dicionário, decrementar contador
-                client.ExecuteAsync(request, collabResponse => { addCollabs(collabs, collabResponse, jsdes); --repoCount; });
+                ++TOTAL_LANG;                
+                
+                //pedir lista de colaboradores, adicionar ao dicionário
+                if (repo.Contributors_url != null) {
+                    RestRequest req = new RestRequest(repo.Contributors_url);
+                    AddRequestHeaders(req);
+                    HttpHelper ch = new HttpHelper(client, req, collabResponse => AddCollabs(collabs, collabResponse, jsdes));
+                    collabHelpers.Add(ch);
+                    ch.ExecuteRequest();
+                }
             }
-            
+            Console.WriteLine("Finished language count");
             languages = languages.OrderBy(c => c.Key).ToDictionary(t => t.Key, t => t.Value);
-            
-            while (org.Name == null || repoCount != 0) ; //esperar por chamadas async, se necessário
 
-            generateHtml(args[0], languages, collabs);
-
-            drawHist(languages);
-            Console.WriteLine();
-            Console.WriteLine("".PadRight(80, '-'));
-            drawHist(collabs);
+            while (collabHelpers.Exists(ch => !ch.IsDone)) ; //wait for collab requests
             
+            Console.WriteLine("Generating HTML");
+            generateHtml(org, languages, collabs);
+
+            Console.WriteLine("Finished");
             Console.Read();
             return 0;
         }
 
-        private static void generateHtml(string p, Dictionary<string, int> languages, Dictionary<string, int> collabs)
+
+
+        private static void AddRequestHeaders(RestRequest orgRequest)
+        {
+            orgRequest.AddHeader("host", "api.github.com");
+            orgRequest.AddHeader("User-Agent", "36864");
+            orgRequest.AddHeader("Authorization", "token 6cc637fc4c44405fab41ea4f837cef12d5bb9996");
+        }
+
+        
+
+       
+        private static void generateHtml(Org org, Dictionary<string, int> languages, Dictionary<string, int> collabs)
         {
             HtmlDocument doc = new HtmlDocument();
-            doc.Load(BASEHTML);           
-                        
+            doc.Load(BASE_HTML_ORG);
+            HtmlNode rootNode = doc.DocumentNode;
+
+            //add org info
+            rootNode.SelectSingleNode("//img[@name=\"avatar\"]").SetAttributeValue("src", org.Avatar_URL);
+            rootNode.SelectSingleNode("//h1[@name=\"org\"]").AppendChild(HtmlTextNode.CreateNode(org.Name));
+            rootNode.SelectSingleNode("//h3[@name=\"location\"]").AppendChild(HtmlTextNode.CreateNode(org.Location));
+            
+            //generate language graph
+            HtmlNode langgraph = rootNode.SelectSingleNode("//div[@name=\"languagegraph\"]");
+            foreach (var item in languages)
+            {
+                langgraph.AppendChild(BootstrapUtils.GraphEntry(item.Key, item.Value, item.Value*100.0d / TOTAL_LANG));
+            }
+
+            //generage collaborator graph
+            HtmlNode collabgraph = rootNode.SelectSingleNode("//div[@name=\"collabgraph\"]");
+            foreach (var item in collabs)
+            {
+                collabgraph.AppendChild(BootstrapUtils.GraphEntry(BootstrapUtils.NameToContribLink(item.Key), item.Value, item.Value * 100.0d / TOTAL_COLLAB));
+            }
+
+            StreamWriter f = File.CreateText("test.html");
+            doc.Save(f);
+
         }
     }
 }

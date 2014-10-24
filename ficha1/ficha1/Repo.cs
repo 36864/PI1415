@@ -8,9 +8,23 @@ namespace ficha1
 {
     class Repo
     {
-        public string Name { get; set; }
-        public string Language { get; set; }
-        private string collaborators_url;
-        public string Collaborators_url { get { return collaborators_url.Replace("{/collaborator}", "").Replace("https://api.github.com", ""); } set { collaborators_url = value; } }
+        private string name;
+
+        public string Name
+        {
+            get { return name != null ? name : ""; }
+            set { name = value; }
+        }
+
+        private string language;
+
+        public string Language
+        {
+            get { return language != null ? language : "(N/A)"; }
+            set { language = value; }
+        }
+        
+        private string contributors_url;
+        public string Contributors_url { get { return contributors_url == null ? null : contributors_url.Replace("{/collaborator}", "").Replace("https://api.github.com", ""); } set { contributors_url = value; } }
     }
 }

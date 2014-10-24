@@ -8,8 +8,15 @@ namespace ficha1
 {
     class Org
     {
-        public string Name { get; set; }
-        public string Location { get; set; }
+        public string Login { get; set; }
+        private string location;
+
+        public string Location
+        {
+            get { return location != null ? location : "Unkown Location"; }
+            set { location = value; }
+        }
+        
         public string Avatar_URL { get; set; }
         public string Repos_URL { get; set; }
         public List<Repo> Repos { get; set; }

@@ -49,7 +49,7 @@ namespace ficha1
             //bar
             node.AppendChild(GenerateNode("div", "col-xs-7", "", "", null))
                 .AppendChild(GenerateNode("div", "graph", "", "", null))
-                .AppendChild(GenerateNode("div", "bar", percentage.ToString().Substring(0, 4)+"%", "", attribs));
+                .AppendChild(GenerateNode("div", "bar", percentage + "%", "", attribs));
             //count
             node.AppendChild(GenerateNode("div", "col-xs-1", "", "", null))
                 .AppendChild(GenerateNode("div", "count", count.ToString(), "", null));

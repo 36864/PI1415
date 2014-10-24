@@ -15,7 +15,6 @@ namespace ficha1
 
         private int X_RATE_LIMIT = 50;
         private int X_RATE_LIMIT_RESET = 0;
-        private int REQUEST_COUNT = 0;
 
 
         public bool IsDone { get; private set; }
@@ -35,21 +34,36 @@ namespace ficha1
 
         public void ExecuteRequest()
         {
-            ++this.REQUEST_COUNT;
             if (this.X_RATE_LIMIT <= 3)
             {
                 DateTime d = UNIX_TIME.AddSeconds(this.X_RATE_LIMIT_RESET);
                 Console.WriteLine("Exceeded API rate limit. Retrying at " + d.ToString());
                 while (DateTime.UtcNow < d) ;
             }
-            Client.ExecuteAsync(Request, response=> {
+            this.HandleResponse(Client.Execute(Request));
+        }
+
+        public void ExecuteRequestAsync()
+        {
+            if (this.X_RATE_LIMIT <= 3)
+            {
+                DateTime d = UNIX_TIME.AddSeconds(this.X_RATE_LIMIT_RESET);
+                Console.WriteLine("Exceeded API rate limit. Retrying at " + d.ToString());
+                while (DateTime.UtcNow < d) ;
+            }
+            Client.ExecuteAsync(Request, response =>
+            {
                 this.HandleResponse(response);
             });
         }
 
         private void HandleResponse(IRestResponse response)
         {
-
+            if (response.ErrorMessage != null)
+            {
+                Console.WriteLine(response.ErrorMessage);
+                return;
+            }
             int.TryParse(response.Headers.FirstOrDefault(a => a.Name == "X-RateLimit-Limit").Value.ToString(), out X_RATE_LIMIT);
             int.TryParse(response.Headers.FirstOrDefault(a => a.Name == "X-RateLimit-Reset").Value.ToString(), out X_RATE_LIMIT_RESET);
             this.Callback(response);
@@ -72,7 +86,6 @@ namespace ficha1
             }
             else
                 this.IsDone = true;
-            --this.REQUEST_COUNT;
         }
 
     }

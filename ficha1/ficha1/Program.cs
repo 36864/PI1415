@@ -14,15 +14,16 @@ namespace ficha1
     class Program
     {
         static string BASE_URL = "https://api.github.com/";
-        
+
         static string BASE_HTML_ORG = "../../base_org.html";
         static string BASE_HTML_INDEX = "../../base_index.html";
         static string BASE_HTML_COLLAB = "../../base_collab.html";
-        
+
         static int TOTAL_LANG = 0, TOTAL_COLLAB = 0;
 
-        static void AddRepos (List<Repo> list, IRestResponse source, IDeserializer deserializer){
-            //adicionar repositórios a lista
+        static void AddRepos(List<Repo> list, IRestResponse source, IDeserializer deserializer)
+        {
+           //adicionar repositórios a lista
             list.AddRange(deserializer.Deserialize<List<Repo>>(source));
         }
 
@@ -42,34 +43,25 @@ namespace ficha1
             }
         }
 
-        static int Main(string[] args)
-        {
-
-            if (args.Length < 1)
-            {
-                Console.WriteLine("Falta Organizacao");
-                return 1;
-            }
-
-            RestClient client = new RestClient(BASE_URL);
+        static void GenerateOrgPage(string orgname, RestClient client) {
             Org org = new Org();
             JsonDeserializer jsdes = new JsonDeserializer();
 
 
-            RestRequest orgRequest = new RestRequest("orgs/" + args[0]);
+            RestRequest orgRequest = new RestRequest("orgs/" + orgname);
             AddRequestHeaders(orgRequest);
             HttpHelper orgHelper = new HttpHelper(client, orgRequest, response => org = jsdes.Deserialize<Org>(response));
             orgHelper.ExecuteRequest();
             while (!orgHelper.IsDone) ;
 
-            Console.WriteLine("Got " + org.Name + " info.");
-            Console.WriteLine("Getting repos for " + org.Name);
+            Console.WriteLine("Got " + org.Login + " info.");
+            Console.WriteLine("Getting repos for " + org.Login);
             RestRequest repoRequest = new RestRequest(org.Repos_URL);
             AddRequestHeaders(repoRequest);
             HttpHelper repoHelper = new HttpHelper(client, repoRequest, response => AddRepos(org.Repos, response, jsdes));
             repoHelper.ExecuteRequest();
             while (!repoHelper.IsDone) ;
-            Console.WriteLine("Got " + org.Name + " repos.");
+            Console.WriteLine("Got " + org.Login + " repos.");
 
             
             Dictionary<string, int> languages = new Dictionary<string, int>();
@@ -96,21 +88,20 @@ namespace ficha1
                     AddRequestHeaders(req);
                     HttpHelper ch = new HttpHelper(client, req, collabResponse => AddCollabs(collabs, collabResponse, jsdes));
                     collabHelpers.Add(ch);
-                    ch.ExecuteRequest();
+                    ch.ExecuteRequestAsync();
                 }
             }
-            Console.WriteLine("Finished language count");
+            Console.WriteLine("Finished language count for " + org.Login);
             languages = languages.OrderBy(c => c.Key).ToDictionary(t => t.Key, t => t.Value);
 
             while (collabHelpers.Exists(ch => !ch.IsDone)) ; //wait for collab requests
             
-            Console.WriteLine("Generating HTML");
+            Console.WriteLine("Generating org HTML for " + org.Login);
             generateHtml(org, languages, collabs);
 
-            Console.WriteLine("Finished");
-            Console.Read();
-            return 0;
+            Console.WriteLine("Finished " + org.Login);
         }
+
 
 
 
@@ -132,9 +123,10 @@ namespace ficha1
 
             //add org info
             rootNode.SelectSingleNode("//img[@name=\"avatar\"]").SetAttributeValue("src", org.Avatar_URL);
-            rootNode.SelectSingleNode("//h1[@name=\"org\"]").AppendChild(HtmlTextNode.CreateNode(org.Name));
+            rootNode.SelectSingleNode("//h1[@name=\"org\"]").AppendChild(HtmlTextNode.CreateNode(org.Login));
             rootNode.SelectSingleNode("//h3[@name=\"location\"]").AppendChild(HtmlTextNode.CreateNode(org.Location));
-            
+            rootNode.SelectSingleNode("//node()[@name=\"indexlink\"]").AppendChild(HtmlNode.CreateNode("<a href=\"../index.html\">Index</a>"));
+            rootNode.SelectSingleNode("//title").AppendChild(HtmlTextNode.CreateNode(org.Login));
             //generate language graph
             HtmlNode langgraph = rootNode.SelectSingleNode("//div[@name=\"languagegraph\"]");
             foreach (var item in languages)
@@ -149,9 +141,32 @@ namespace ficha1
                 collabgraph.AppendChild(BootstrapUtils.GraphEntry(BootstrapUtils.NameToContribLink(item.Key), item.Value, item.Value * 100.0d / TOTAL_COLLAB));
             }
 
-            StreamWriter f = File.CreateText("test.html");
+            StreamWriter f = File.CreateText("../../org/"+org.Login+".html");
             doc.Save(f);
 
         }
+
+        static int Main(string[] args)
+        {
+
+            if (args.Length < 1)
+            {
+                Console.WriteLine("Falta Organizacao");
+                return 1;
+            }
+
+            RestClient client = new RestClient(BASE_URL);
+            List<Task> tasks = new List<Task>();
+            foreach (string orgname in args)
+            {
+                tasks.Add(Task.Run(() => GenerateOrgPage(orgname, client)));
+            }
+            Task.WaitAll(tasks.ToArray());
+            Console.WriteLine("Completed all tasks.");
+            Console.Read();
+            return 0;
+        }
+
     }
+
 }

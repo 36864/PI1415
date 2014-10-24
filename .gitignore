@@ -1,6 +1,6 @@
-ficha1/ficha1/bin/*
-ficha1/ficha1/obj/*
-ficha1/ficha1/Properties/*
+ficha1/ficha1/bin
+ficha1/ficha1/obj
+ficha1/ficha1/Properties
 *.suo
 ficha1/ficha1.v12.suo
 *.exe

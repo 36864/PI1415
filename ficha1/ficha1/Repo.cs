@@ -25,6 +25,9 @@ namespace ficha1
         }
         
         private string contributors_url;
-        public string Contributors_url { get { return contributors_url == null ? null : contributors_url.Replace("{/collaborator}", "").Replace("https://api.github.com", ""); } set { contributors_url = value; } }
+        public string Contributors_url { 
+            get { return contributors_url == null ? null : contributors_url.Replace("{/collaborator}", "").Replace("https://api.github.com", ""); } 
+            set { contributors_url = value; } 
+        }
     }
 }

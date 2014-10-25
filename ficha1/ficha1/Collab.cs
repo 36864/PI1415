@@ -9,9 +9,12 @@ namespace ficha1
     class Collab
     {
         private string login;
-        public string Login { get { return login == null ? "" : login;} set { login = value; } }
+        public string Login { 
+            get { return login == null ? "" : login; } 
+            set { login = value; } 
+        }
+        
         private string name;
-
         public string Name
         {
             get { return name != null ? name : ""; }
@@ -19,7 +22,6 @@ namespace ficha1
         }
 
         private string email;
-
         public string Email
         {
             get { return email != null ? email : ""; }
@@ -27,7 +29,6 @@ namespace ficha1
         }
 
         private string avatar_url;
-
         public string Avatar_URL
         {
             get { return avatar_url != null ? avatar_url : null; }
@@ -35,7 +36,6 @@ namespace ficha1
         }
 
         private string url;
-
         public string URL
         {
             get { return url != null ? url : ""; }

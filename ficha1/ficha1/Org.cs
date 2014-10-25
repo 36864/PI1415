@@ -20,10 +20,14 @@ namespace ficha1
         public string Avatar_URL { get; set; }
         public string Repos_URL { get; set; }
         public List<Repo> Repos { get; set; }
-
+        
+        //lista de colaboradores aqui??????????
+        public List<Collab> colbs;
+        
         public Org()
         {
             Repos = new List<Repo>();
+            colbs = new List<Collab>();
         }
     }
 }

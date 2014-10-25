@@ -33,9 +33,10 @@ namespace ficha1
             return GenerateNode("h3", "", value, name, null);
         }
 
+        //TODO add .html
         public static string NameToContribLink(string name)
         {
-           return "<a href=\"/contrib/" + name+"\">" + name + "</a>";
+            return "<a href=\"../org/contrib/" + name + ".html\">" + name + "</a>";
         }
 
         public static HtmlNode GraphEntry(string name, int count, double percentage)

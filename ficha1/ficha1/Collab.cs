@@ -20,7 +20,7 @@ namespace ficha1
 
         private string email;
 
-        public string Emailk
+        public string Email
         {
             get { return email != null ? email : ""; }
             set { email = value; }

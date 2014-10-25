@@ -27,10 +27,11 @@ namespace ficha1
             list.AddRange(deserializer.Deserialize<List<Repo>>(source));
         }
 
-        static void AddCollabs(Dictionary<string, int> collabs, IRestResponse source, IDeserializer deserializer)
+        static void AddCollabs(Org o, Dictionary<string, int> collabs, IRestResponse source, IDeserializer deserializer)
         {
             foreach (Collab collab in deserializer.Deserialize<List<Collab>>(source))
             {
+                //o.colbs.Add(collab);
                 if (collabs.ContainsKey(collab.Login))
                 {
                     ++collabs[collab.Login];
@@ -38,6 +39,7 @@ namespace ficha1
                 else
                 {
                     collabs.Add(collab.Login, 1);
+                    o.colbs.Add(collab);
                 }
                 ++TOTAL_COLLAB;
             }
@@ -67,6 +69,8 @@ namespace ficha1
             Dictionary<string, int> languages = new Dictionary<string, int>();
             Dictionary<string, int> collabs = new Dictionary<string, int>();
 
+           // colbs = new List<Collab>(); 
+            
             List<HttpHelper> collabHelpers = new List<HttpHelper>();
 
             //Construir lista de linguagens
@@ -86,7 +90,7 @@ namespace ficha1
                 if (repo.Contributors_url != null) {
                     RestRequest req = new RestRequest(repo.Contributors_url);
                     AddRequestHeaders(req);
-                    HttpHelper ch = new HttpHelper(client, req, collabResponse => AddCollabs(collabs, collabResponse, jsdes));
+                    HttpHelper ch = new HttpHelper(client, req, collabResponse => AddCollabs(org, collabs, collabResponse, jsdes));
                     collabHelpers.Add(ch);
                     ch.ExecuteRequestAsync();
                 }
@@ -143,6 +147,40 @@ namespace ficha1
 
             StreamWriter f = File.CreateText("../../org/"+org.Login+".html");
             doc.Save(f);
+            generateContHtml(org.colbs);
+        }
+
+        private static void generateContHtml(List<Collab> clbs)
+        {
+            HtmlDocument doc = new HtmlDocument();
+            foreach (Collab c in clbs)
+            {
+                doc.Load(BASE_HTML_COLLAB);
+                HtmlNode rootNode = doc.DocumentNode;
+
+                //add org info
+                rootNode.SelectSingleNode("//img[@name=\"avatar\"]").SetAttributeValue("src", c.Avatar_URL);
+                rootNode.SelectSingleNode("//h1[@name=\"collab\"]").AppendChild(HtmlTextNode.CreateNode(c.Login));
+               // rootNode.SelectSingleNode("//h3[@name=\"location\"]").AppendChild(HtmlTextNode.CreateNode(org.Location));
+                rootNode.SelectSingleNode("//node()[@name=\"indexlink\"]").AppendChild(HtmlNode.CreateNode("<a href=\"../index.html\">Index</a>"));
+                rootNode.SelectSingleNode("//title").AppendChild(HtmlTextNode.CreateNode(c.Login));
+                //generate language graph
+                HtmlNode langgraph = rootNode.SelectSingleNode("//div[@name=\"languagegraph\"]");
+               /* foreach (var item in languages)
+                {
+                    langgraph.AppendChild(BootstrapUtils.GraphEntry(item.Key, item.Value, item.Value * 100.0d / TOTAL_LANG));
+                }
+
+                //generage collaborator graph
+                HtmlNode collabgraph = rootNode.SelectSingleNode("//div[@name=\"collabgraph\"]");
+                foreach (var item in collabs)
+                {
+                    collabgraph.AppendChild(BootstrapUtils.GraphEntry(BootstrapUtils.NameToContribLink(item.Key), item.Value, item.Value * 100.0d / TOTAL_COLLAB));
+                }*/
+
+                StreamWriter f = File.CreateText("../../org/contrib/" + c.Login + ".html");
+                doc.Save(f);
+            }
 
         }
 

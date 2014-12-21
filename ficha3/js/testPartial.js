@@ -10,9 +10,14 @@ function minOf3(a, b, c) {
     return Math.min(a, b, c);
 }
 
+function greaterThan(a, b) {
+    'use strict';
+    return a > b;
+}
+
 $mu.test('Partial Test', function () {
     'use_strict';
-    var t2npfn, t2npsn, tfpnp, t2upfn, t2upsn, tfpup, t3np1n, t3np2n, t3npan;
+    var t2npfn, t2npsn, tfpnp, t2upfn, t2upsn, tfpup, t3np1n, t3np2n, t3npan, t2npo;
     
     t2npfn = partial(namedParamPower, null, 10);
     $mu.assert(t2npfn(2) === Math.pow(2, 10), 'Test two named parameters, first null');
@@ -32,6 +37,7 @@ $mu.test('Partial Test', function () {
     $mu.assert(t3np2n(5, 2) === 2, 'Test 3 named parameters, 2 null');
     t3npan = minOf3.partial();
     $mu.assert(t3npan(5, 3, 19) === 3, 'Test 3 named parameters, all null');
-
+    t2npo = greaterThan.partial({ b: 10 });
+    $mu.assert(t2npo(20), 'Test 2 named parameters, ordered');
 });
          

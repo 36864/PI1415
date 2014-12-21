@@ -33,11 +33,10 @@ var isNOdd = isOdd.not();
 console.log(isNOdd(4));			//true
 console.log(isNOdd(5));			//false
 
-$mu.test('Function Not - A', function (){
-							//var test1 = isNEven(4);
-							$mu.assert(isNEven(4) == false, "4 is ODD ?");
-							$mu.assert(isNEven(5) == true, "5 is ODD ?");
-							$mu.assert(isNOdd(4) == true, "4 is ODD ?");
-							$mu.assert(isNOdd(5) == false, "5 is ODD ?");
-	
+$mu.test('Function Not - B', function (){
+							$mu.assert(isNEven(4) == false, "isNEven(4)");
+							$mu.assert(isNEven(5) == true, "isNEven(5)");
+							$mu.assert(isNOdd(4) == true, "isNOdd(4)");
+							$mu.assert(isNOdd(5) == false, "isNOdd(5)");
+
 							});

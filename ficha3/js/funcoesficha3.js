@@ -1,5 +1,5 @@
 function partial(func) {
-    /*jshint */
+    /*jshint validthis: true*/
     'use strict';
     var args, pthis;
     args = Array.prototype.slice.call(arguments, 1);
@@ -24,29 +24,17 @@ Function.prototype.partial = function (ctx) {
     /*jslint regexp: true */
     argnames = func.toString().replace(/((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg, '').match(/^function\s*[^\(]*\(\s*([^\)]*)\)/m)[1].split(/,/);
     /*jslint regexp: false */
-    /*jslint plusplus:true */
-    for (i = 0; i < argnames.lenth; (++i)) {
+    for (i = 0; i < argnames.lenth; i += 1) {
         args[argnames[i]] = ctx[argnames[i]] || null;
     }
-    /*jslint plusplus:false */
-    //alert(args);
     if (args.length === 0) {
         i = 0;
         for (elem in ctx) {
-      //      alert("working");
-//            alert(elem);
-            args[i] = ctx[elem];
-            i += 1;
-          //  alert(args[1]);
+            if (ctx.hasOwnProperty(elem)) {
+                args[i] = ctx[elem];
+                i += 1;
+            }
         }
     }
- //   alert(args);
     return partial.apply(null, Array.prototype.concat(func, args));
 };
-
-
-
-//var test1 = partial(Math.pow, null, 10);
-var test2 = Math.pow.partial({ a: 2, b: null});
-//alert(test1(2));
-alert(test2(10));

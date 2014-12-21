@@ -13,10 +13,16 @@ function isMzeroMnine(v1, v2)
 	return v1>0 && v2<9;
 }
 
+function between(v1,v2, x)
+{
+	return v1<x && v2>x;
+}
+
 var isEvenNOdd = not(isOdd);
 var isNOdd = not(isEven);
 var isMoreZMinorN = not(isMzeroMnine);
-
+var nbetween = not(between);
+var nbetweenp = between.not();
 var isNEven = isEven.not();
 var NOdd = isOdd.not();
 var isMoreZMinor = isMzeroMnine.not();
@@ -33,6 +39,8 @@ $mu.test('Function Not - A', function (){
 							$mu.assert(isNOdd(5) == true, "isNOdd(5)");
 							$mu.assert(isMoreZMinorN(5, 4) == false, "isMoreZMinorN(5, 4)");
 							$mu.assert(isMoreZMinorN(5, 9) == true, "isMoreZMinorN(5, 9)");
+							$mu.assert(nbetween(5, 9, 6) == false, "nbetween(5, 9, 6)");
+							$mu.assert(nbetween(5, 9, 9) == true, "nbetween(5, 9, 9)");
 							});
 
 $mu.test('Function Not - B', function (){
@@ -42,4 +50,6 @@ $mu.test('Function Not - B', function (){
 							$mu.assert(NOdd(5) == false, "isNOdd(5)");
 							$mu.assert(isMoreZMinor(1, 8) == false, "isMoreZMinorN(1, 8)");
 							$mu.assert(isMoreZMinor(0, 8) == true, "isMoreZMinorN(0, 8)");
+							$mu.assert(nbetweenp(5, 9, 6) == false, "nbetween(5, 9, 6)");
+							$mu.assert(nbetweenp(5, 9, 9) == true, "nbetween(5, 9, 9)");
 							});

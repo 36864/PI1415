@@ -1,3 +1,12 @@
+function avg(testing, classe){
+	var average = 0, count = 0
+	for(var i = 0; i < testing.length; ++i)
+		if(testing[i].class == classe){
+			average += testing[i].grade
+			count++
+		}
+	return average /= count
+}
 
 $mu.test('Function classGrades', function (){
 	var testing =(
@@ -16,7 +25,7 @@ $mu.test('Function classGrades', function (){
 	var testMaxC2 = classGrades(testing).C2.max
 	$mu.assert(testMaxC2 === 15, "testMaxC2");
 	var testAvgC1 = classGrades(testing).C1.average
-	$mu.assert(testAvgC1 === 12, "testAvgC1");
+	$mu.assert(testAvgC1 === avg(testing, "C1"), "testAvgC1");
 	var testAvgC2 = classGrades(testing).C2.average
-	$mu.assert(testAvgC2 === 13, "testAvgC2");
+	$mu.assert(testAvgC2 === avg(testing, "C2"), "testAvgC2");
 });

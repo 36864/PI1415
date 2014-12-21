@@ -12,7 +12,7 @@ function partial(func) {
                 j += 1;
             }
         }
-        return func.apply(pthis, args);
+        return func.apply(pthis, Array.prototype.concat(args, Array.prototype.slice.call(arguments, j)));
     };
 }
 

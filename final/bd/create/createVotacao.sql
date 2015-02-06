@@ -5,7 +5,7 @@
 CREATE TABLE votacao
 (
   id_queixinha serial NOT NULL,
-  username character(20) NOT NULL,
+  username character(50) NOT NULL,
   correta boolean NOT NULL,
   CONSTRAINT pkvotacao PRIMARY KEY (id_queixinha, username),
   CONSTRAINT "fkUser" FOREIGN KEY (username)

@@ -10,6 +10,7 @@ CREATE TABLE "Queixinha"
   "Votos_Corretos" integer,
   "Votos_incorretos" integer,
   "ID" serial NOT NULL,
+  "Geo_referencia" character(20),
   CONSTRAINT "pkQueixinha" PRIMARY KEY ("ID"),
   CONSTRAINT username FOREIGN KEY (username)
       REFERENCES utilizador (username) MATCH SIMPLE

@@ -7,9 +7,8 @@ CREATE TABLE utilizador
   username character(20) NOT NULL,
   password character(20) NOT NULL,
   email character(20) NOT NULL,
-  "Gestor" character(3) NOT NULL,
-  CONSTRAINT utilizador_pkey PRIMARY KEY (username),
-  CONSTRAINT "cGestor" CHECK ("Gestor" = ANY (ARRAY['Sim'::bpchar, 'Não'::bpchar]))
+  "Gestor" boolean NOT NULL,
+  CONSTRAINT utilizador_pkey PRIMARY KEY (username)
 )
 WITH (
   OIDS=FALSE

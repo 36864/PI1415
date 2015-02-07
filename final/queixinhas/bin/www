@@ -18,13 +18,14 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
-
+console.log('creating server');
 var server = http.createServer(app);
+console.log('created server');
 
 /**
  * Listen on provided port, on all network interfaces.
  */
-
+console.log('listening on ' + port);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);

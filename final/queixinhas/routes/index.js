@@ -4,13 +4,15 @@ var db = require('../dbaccess');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-	if(req.user) return res.redirect('/queixinhas');
+	console.log(req.user);
+	if(req.user.username) return res.redirect('/queixinhas');
 	//check user authentication
 	//get list of top/most recent entries for unauthenticated users
 	//else get list of entries, add paging
+	console.log('no user');
 	db.getQueixinhas(1, function(err, list){
-		if(err) res.render('index');
-		res.render('index', { queixas: list });
+		if(err) return res.render('index');
+		return res.render('index', { queixas: list });
 	});
 	
 });

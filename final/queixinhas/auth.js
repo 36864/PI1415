@@ -66,7 +66,7 @@ module.exports = function(app)
 			user.salt = salt;
 			user.hash = hash;
 		});
-		db.User.createNew(user, function(err, user) {
+		db.newUser(user, function(err, user) {
 			if(err) next('router');
 			return res.redirect('/');
 		});

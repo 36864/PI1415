@@ -4,28 +4,34 @@ var db = require('.././dbaccess');
 
 
 router.use(function(req, res, next) {
-	console.log('USER: ' + req.user);
-	if(!/^\/\d+$/.test(req.url)){
-		if(!req.user) return next('router');
-		
+	console.log('serving ' + req.url + ' to ' + req.user);
+	
+	if(!/^\/\d+$/.test(req.url) && !/^\/(\?page=\d*|$)$/.test(req.url)){		
+		console.log('REDIRECTING');
+		if(!req.user.username) return res.redirect('/queixinhas');
 	}
 	return next();
 });
 
 router.get('/', function(req, res, next) {
-	res.writeHead(200, {'Content-Type' : 'html/plain'});
-	db.get
-	return res.render('dashboard', {user: req.user});
-});
-
-router.get('/list/:page', function(req, res, next) {
 	//redirect unauthenticated users to index 
 	//show paged list to authenticated users	
-	db.getQueixinhas(req.params.page, function(err, list){
-		if(err) next('route');
-		return res.render('list', {list: list, user: user, page: req.params.page});	
+	var page = 1;
+	if(req.query.page){
+	//	if(user.username)
+			page = req.query.page;
+	}
+	console.log('SERVING LIST PAGE ' + page);
+	db.getQueixinhas(page, function(err, list){
+		//if(err) return next('route');
+		return res.render('queixinhas', {list: list, user: req.user, page: page});	
 	});
-	
+
+});
+
+router.get('/dashboard', function(req, res, next) {
+	res.writeHead(200, {'Content-Type' : 'html/plain'});
+	return res.render('dashboard', {user: req.user});
 });
 
 router.get('/:id', function(req, res, next) {
@@ -34,14 +40,16 @@ router.get('/:id', function(req, res, next) {
 	if(!req.user) req.user.username = '';
 	db.getUser(req.user.username, function(err, user){
 		console.log('GOT USER');
+		if(err) console.log('ERROR : ' + err);
 		db.getQueixinha(req.params.id, function(err, queixa){
+			if(err) console.log('ERROR : ' + err);
 			if(err) {
 				res.flash(err);
-				res.redirect('/');
+				return res.redirect('/');
 			}
 			console.log('GOT QUEIXINHA' );
 			console.log(err + ' ; ' + queixa + ' ; ' + user);
-			res.render('queixinha', {queixinha: queixa, user: user});
+			return res.render('queixinha', {queixinha: queixa, user: user});
 	});
 	});
 });
@@ -57,10 +65,10 @@ router.post('/new', function(req, res, next) {
 	
 	if(queixa.titulo = "") {
 		res.flash('Título não pode ser vazio');
-		res.render('/new', queixa);
+		return res.render('/new', queixa);
 	}
 	access.newQueixinha(queixa, new function(err, queixa) {
-			res.redirect('/' + queixa.id);
+			return res.redirect('/' + queixa.id);
 		});
 	
 });
@@ -81,7 +89,7 @@ router.post('/:id/edit', function(req, res, next) {
 			var queixaEdit = new db.queixinha(null, req.body.title, req.body.desc, req.user, null, null, req.body.geo, null, req.body.categorias, req.body.closed);
 			if(queixaEdit.titulo = "") {
 				res.flash('Título não pode ser vazio');
-				res.render('/' + req.params.id + '/new', queixa);
+				return res.render('/' + req.params.id + '/new', queixa);
 			}
 			queixa.title = queixaEdit.title;
 			queixa.desc = queixaEdit.desc;
@@ -99,7 +107,7 @@ router.post('/:id/vote', function(req, res, next) {
 		db.getQueixinha(req.params.id, function(err, queixa){
 			
 		res.writeHead(200, {'Content-Type':'text/html' });
-		res.render('queixinha', {queixa: queixa, voted: user.voted});
+		return res.render('queixinha', {queixa: queixa, voted: user.voted});
 		});
 	});
 });

@@ -9,6 +9,9 @@ CREATE TABLE "Comentario"
   comentario character(140) NOT NULL,
   username character(50) NOT NULL,
   CONSTRAINT "pkComentario" PRIMARY KEY ("Id", "Id_Queixinha"),
+  CONSTRAINT "fkQueixinha" FOREIGN KEY ("Id_Queixinha")
+      REFERENCES "Queixinha" ("ID") MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT "user" FOREIGN KEY (username)
       REFERENCES utilizador (username) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION

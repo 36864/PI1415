@@ -8,6 +8,9 @@ CREATE TABLE votacao
   username character(50) NOT NULL,
   correta boolean NOT NULL,
   CONSTRAINT pkvotacao PRIMARY KEY (id_queixinha, username),
+  CONSTRAINT "fkQueixinha" FOREIGN KEY (id_queixinha)
+      REFERENCES "Queixinha" ("ID") MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION,
   CONSTRAINT "fkUser" FOREIGN KEY (username)
       REFERENCES utilizador (username) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION

@@ -1,7 +1,7 @@
 module.exports = {
-    selectAll:    dbSelectAll,
-    selectOne:    dbSelectOne,
-    executeQuery: dbExecuteQuery,
+    SelectAll:    dbSelectAll,
+    SelectOne:    dbSelectOne,
+    ExecuteQuery: dbExecuteQuery,
     SelectSome : dbSelectSome
 }
 

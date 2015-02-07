@@ -126,7 +126,7 @@ access.getCategoria = function(designacao, cb){
 access.newQueixinha = function(queixinha, cb){
 	var params = [queixinha.titulo, queixinha.descricao, queixinha.username, queixinha.Georef];
 
-    db.executeQuery("INSERT into queixinha(titulo, descricao, username, Geo_referencia) values($1, $2, $3, $4, $5) returning ID",
+    db.ExecuteQuery("INSERT into queixinha(titulo, descricao, username, Geo_referencia) values($1, $2, $3, $4, $5) returning ID",
         params,
         function(err, id) { 
         	if (err)
@@ -165,7 +165,7 @@ access.newQueixinha = function(queixinha, cb){
 //CALLBACK a REVER
 access.newUser = function(user, cb){
 	var params = [user.username, username.hash, username.salt, username.email, username.gestor];
-    db.executeQuery("INSERT into utilizador(username, hash, salt, email, Gestor) values($1, $2, $3, $4, $5)",
+    db.ExecuteQuery("INSERT into utilizador(username, hash, salt, email, Gestor) values($1, $2, $3, $4, $5)",
         params,
         function(err) { 
         	if (err)
@@ -177,7 +177,7 @@ access.newUser = function(user, cb){
 
 access.newCategoria = function(designacao, cb){
 	var params = [designacao];
-    db.executeQuery("INSERT into Categoria(designacao) values($1) returning ID",
+    db.ExecuteQuery("INSERT into Categoria(designacao) values($1) returning ID",
         params,
         function(err, id) { 
         	if (err)
@@ -189,7 +189,7 @@ access.newCategoria = function(designacao, cb){
 
 access.newCategoriaQueixinha = function(categoria, id, cb){
 	var params = [categoria, id];
-    db.executeQuery("INSERT into CategoriaQueixinha(categoria, queixinha) values($1, $2)",
+    db.ExecuteQuery("INSERT into CategoriaQueixinha(categoria, queixinha) values($1, $2)",
         params,
         function(err) { 
         	if (err)

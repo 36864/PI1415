@@ -64,7 +64,7 @@ access.getQueixinha = function (id, cb) {
 		var index =0;
 		access.getCategoriaQueixinha(id, function (err, el){
 			if (err)
-				cb(err, null);
+				return cb(err, null);
 			categoria[index++] = el;
 	
 		db.SelectOne("SELECT id, titulo, descricao, Votos_Corretos, Votos_Incorretos, username, Geo_referencia, Fechada from Queixinha where id = $1", 
@@ -121,39 +121,43 @@ access.newQueixinha = function(queixinha, cb){
         params,
         function(err, id) { 
         	if (err)
-        		cb(err, null);
+        		return cb(err, null);
 //falta retornar id 
         	if (queixinha.categoria !== undefined){
-    			var idc;
     			for (var i = queixinha.categoria.length - 1; i >= 0; i--) {
     				access.getCategoria(queixinha.categoria[i], 
-    										function (c){ 
-    											if (c !== undefined)
-    												newCategoriaQueixinha(c, id, 
-    															function(err) { 
-        															if (err)
-        																cb(err, null)
-																	cb(null, queixinha.categoria[i]);
-																});
+    					function (err, c){ 
+    						if (err)
+        				 		return cb(err, null);
+    						if (c !== undefined)
+    							newCategoriaQueixinha(c, id, 
+    									function(err) { 
+        									if (err)
+        										return cb(err, null)
+											cb(null, queixinha.categoria[i]);
+										});
     				else{
-    					access.newCategoria(queixinha.categoria[i], function(err, id) { 
-        														if (err)
-        															cb(err, null)
-																cb(null, id);
-															});
-    					access.newCategoriaQueixinha(c, id, function(err) { 
-        												if (err)
-        													cb(err, null)
-														cb(null, c);	
-													});
+    					access.newCategoria(queixinha.categoria[i], 
+    								function(err, id) { 
+        								if (err)
+        									return cb(err, null)
+        								
+        								access.newCategoriaQueixinha(c, id, 
+        												function(err) { 
+        													if (err)
+        														return cb(err, null);
+															cb(null, null);	
+														});
+										cb(null, id);});
     				}
     			}); 
         	}
         }
-        cb(null, id);});    
+        cb(null, id);
+    });    
 };
 
-//CALLBACK a REVER
+
 access.newUser = function(user, cb){
 	var params = [user.username, username.hash, username.salt, username.email, username.gestor];
     db.ExecuteQuery("INSERT into utilizador(username, hash, salt, email, Gestor) values($1, $2, $3, $4, $5)",

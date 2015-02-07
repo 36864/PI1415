@@ -39,6 +39,7 @@ function categoria(id, designacao)
 	this.id = id;
 	this.designacao = designacao;
 }
+
 access.getQueixinhas = function (page, cb){
 	//return lista de queixinhas, pagina page
 	var offset = (page-1) * 10;
@@ -103,18 +104,93 @@ access.getCategoriaQueixinha = function(id, cb){
 		});
 };
 
+access.getCategoria = function(designacao, cb){
+	db.dbSelectOne("SELECT ID from Categoria where designacao = $1", 
+		[designacao],
+		function (err, row) {
+			if (err)
+				cb(err, null);
+			cb(null, row.ID);
+		});
+};
 
 //funcoes pa criar objects na BD. Chamar callback com o objecto criado
 //recebe objecto incompleto (sem campos gerados, sem comentarios, sem ID)
 //autor vem como objecto user
 //categorias vem como string
 access.newQueixinha = function(queixinha, cb){
+	var params = [queixinha.titulo, queixinha.descricao, queixinha.username, queixinha.Georef];
+
+    db.executeQuery("INSERT into queixinha(titulo, descricao, username, Geo_referencia) values($1, $2, $3, $4, $5) returning ID",
+        params,
+        function(err) { 
+        	if (err)
+        		cb(err, null);
+//falta retornar id 
+        	if (queixinha.categoria !== undefined){
+    			var idc;
+    			for (var i = queixinha.categoria.length - 1; i >= 0; i--) {
+    				getCategoria(queixinha.categoria[i], 
+    										function (c){ 
+    											if (c !== undefined)
+    												newCategoriaQueixinha(c, , 
+    															function(err) { 
+        															if (err)
+        																cb(err, null)
+																	cb(null, queixinha.categoria[i]);
+																});
+    				else{
+    					newCategoria(queixinha.categoria[i], function(err) { 
+        														if (err)
+        															cb(err, null)
+																cb(null, queixinha.categoria[i]);
+															});
+    					newCategoriaQueixinha(c, , function(err) { 
+        												if (err)
+        													cb(err, null)
+														cb(null, queixinha.categoria[i]);	
+													});
+    				}
+    			}); 
+        	}
+        }
+        cb(null, );});    
 };
 
+//CALLBACK a REVER
 access.newUser = function(user, cb){
-	
+	var params = [user.username, username.hash, username.salt, username.email, username.gestor];
+    db.executeQuery("INSERT into utilizador(username, hash, salt, email, Gestor) values($1, $2, $3, $4, $5)",
+        params,
+        function(err) { 
+        	if (err)
+        		cb(err, null)
+
+        	cb(err, user.utilizador);
+        });
 };
 
+access.newCategoria = function(designacao, cb){
+	var params = [designacao];
+    db.executeQuery("INSERT into Categoria(designacao) values($1) returning ID",
+        params,
+        function(err) { 
+        	if (err)
+        		cb(err, null);
+        	cb(null, designacao); 
+        }
+    );
+};
 
-
+access.newCategoriaQueixinha = function(categoria, id, cb){
+	var params = [categoria, id];
+    db.executeQuery("INSERT into CategoriaQueixinha(categoria, queixinha) values($1, $2)",
+        params,
+        function(err) { 
+        	if (err)
+        		cb(err, null);
+        	cb(null, id);
+        }
+    );
+};
 module.exports = access;

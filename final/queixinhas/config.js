@@ -2,7 +2,7 @@ var configs = {
     "development": {
         getConnString: function()
         {
-            return "postgres://todonanetuser:todonanetuserpassword@localhost/todonanet";
+            return "postgres://queixinhauser:queixinhas2015localhost/queixinhadb";
         }
     }
 }

@@ -1,18 +1,24 @@
-﻿-- Table: utilizador
+﻿-- Table: "Queixinha"
 
--- DROP TABLE utilizador;
+-- DROP TABLE "Queixinha";
 
-CREATE TABLE utilizador
+CREATE TABLE "Queixinha"
 (
-  username character(50) NOT NULL,
-  email character(50) NOT NULL,
-  "Gestor" boolean NOT NULL,
-  hash character(128) NOT NULL,
-  salt character(128) NOT NULL,
-  CONSTRAINT utilizador_pkey PRIMARY KEY (username)
+  titulo character(140) NOT NULL,
+  descricao character(140),
+  username character(20),
+  "Votos_Corretos" integer,
+  "Votos_incorretos" integer,
+  "ID" serial NOT NULL,
+  "Geo_referencia" character(20),
+  "Fechada" boolean NOT NULL,
+  CONSTRAINT "pkQueixinha" PRIMARY KEY ("ID"),
+  CONSTRAINT username FOREIGN KEY (username)
+      REFERENCES utilizador (username) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
 )
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE utilizador
+ALTER TABLE "Queixinha"
   OWNER TO postgres;

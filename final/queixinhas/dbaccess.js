@@ -44,8 +44,7 @@ function categoria(id, designacao)
 access.getQueixinhas = function (page, cb){
 	//return lista de queixinhas, pagina page
 	var offset = (page-1) * 10;
-	db.SelectAll("SELECT id, titulo, descricao, Votos_Corretos, Votos_Incorretos, username, Geo_referencia, Fechada from Queixinha 
-							LIMIT 10 OFFSET "+offset, 
+	db.SelectAll("SELECT id, titulo, descricao, Votos_Corretos, Votos_Incorretos, username, Geo_referencia, Fechada from Queixinha LIMIT 10 OFFSET "+offset, 
 		function (err, row) {
 			if (err)
 				cb(err, null);

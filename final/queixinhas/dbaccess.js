@@ -44,11 +44,13 @@ function categoria(id, designacao)
 access.getQueixinhas = function (page, cb){
 	//return lista de queixinhas, pagina page
 	var offset = (page-1) * 10;
-	db.dbselectAll("SELECT id, titulo, descricao, Votos_Corretos, Votos_Incorretos, username, Geo_referencia, Fechada from Queixinha LIMIT 10 OFFSET "+offset, 
+	db.SelectAll("SELECT id, titulo, descricao, Votos_Corretos, Votos_Incorretos, username, Geo_referencia, Fechada from Queixinha 
+							LIMIT 10 OFFSET "+offset, 
 		function (err, row) {
 			if (err)
 				cb(err, null);
-			cb (null, new queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_Incorretos, row.Geo_referencia, row.Fechada));
+			cb (null, new queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_Incorretos, 
+				row.Geo_referencia, row.Fechada));
 		});
 };
 
@@ -64,18 +66,19 @@ access.getQueixinha = function (id, cb) {
 	getCategoriaQueixinha(id, function (err, c){
 		categoria[index++] = c;
 	})
-	db.dbSelectOne("SELECT id, titulo, descricao, Votos_Corretos, Votos_Incorretos, username, Geo_referencia from Queixinha where id = $1", 
+	db.SelectOne("SELECT id, titulo, descricao, Votos_Corretos, Votos_Incorretos, username, Geo_referencia, Fechada from Queixinha where id = $1", 
 		[id],
 		function (err, row) {
 			if (err)
 				cb(err, null);
-			cb(null, new queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_Incorretos, row.Geo_referencia, coments))
+			cb(null, new queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_Incorretos, row.Geo_referencia,
+				row.Fechada,coments, categoria))
 		});
 };
 
 access.getUser = function (name, cb){
 	//return user
-	db.dbSelectOne("SELECT username, hash, salt, email, gestor from utilizador where username = $1",
+	db.SelectOne("SELECT username, hash, salt, email, gestor from utilizador where username = $1",
 		[name], 
 		function (err, row) {
 			if (err)
@@ -87,7 +90,7 @@ access.getUser = function (name, cb){
 
 access.getComentQueixinha = function (id, cb){
 	//return user
-	db.dbSelectSome("SELECT id, Id_Queixinha, comentario, username from Comentario where Id_Queixinha = $1", 
+	db.SelectSome("SELECT id, Id_Queixinha, comentario, username from Comentario where Id_Queixinha = $1", 
 		[id],
 		function (err, row) {
 			if (err)
@@ -97,7 +100,7 @@ access.getComentQueixinha = function (id, cb){
 };
 
 access.getCategoriaQueixinha = function(id, cb){
-	db.dbSelectSome("SELECT categoria, Queixinha from Comentario where Queixinha = $1", 
+	db.SelectSome("SELECT categoria, Queixinha from Comentario where Queixinha = $1", 
 		[id],
 		function (err, row) {
 			if (err)
@@ -107,7 +110,7 @@ access.getCategoriaQueixinha = function(id, cb){
 };
 
 access.getCategoria = function(designacao, cb){
-	db.dbSelectOne("SELECT ID from Categoria where designacao = $1", 
+	db.SelectOne("SELECT ID from Categoria where designacao = $1", 
 		[designacao],
 		function (err, row) {
 			if (err)
@@ -195,4 +198,5 @@ access.newCategoriaQueixinha = function(categoria, id, cb){
         }
     );
 };
+
 module.exports = access;

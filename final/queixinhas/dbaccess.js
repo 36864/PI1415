@@ -4,7 +4,7 @@ var conString = "postgres://:pedro@localhost/queixinhaBD";
 
 var access = {};
 
-access.queixinha = function queixinha(id, titulo, descricao, autor, Votos_Corretos,Votos_Incorretos,Georef, fechada, comnt, categoria)
+access.queixinha = function queixinha(id, titulo, descricao, autor, Votos_Corretos,Votos_Incorretos,Georef, fechada, comnt, categorias)
 {
 	this.id = id;
 	this.titulo = titulo;
@@ -14,7 +14,7 @@ access.queixinha = function queixinha(id, titulo, descricao, autor, Votos_Corret
 	this.Votos_Incorretos = Votos_Incorretos;
 	this.Georef = Georef;
 	this.comnt = comnt;
-	this.categoria = categoria;
+	this.categorias = categorias;
 	this.fechada = fechada;
 }
 
@@ -94,6 +94,33 @@ access.getComentQueixinha = function (id, cb){
 		}, cb);	
 };
 
+//faltas categorias
+access.getQueixinhasUtilizador =function (username, cb){
+	db.SelectSome("SELECT ID, titulo, descricao,username, Votos_Incorretos,Votos_Corretos, Geo_referencia, Fechada from Queixinha where username = $1", 
+		[username],
+		function (row) {
+			var categorias =[];
+			access.getCategoriaQueixinha(row.ID, function(r){
+													 categorias[index++] = c;
+			var queix = new queixinha(row.ID, row.titulo, row.descricao, row.username, row.Votos_Corretos,row.Votos_Incorretos,row.Geo_referencia, row.fechada);
+			queix.categorias = categorias;
+			return q;
+		}}, cb);
+}
+
+access.getQueixinhasbyintUser = function (username, cb){
+	db.SelectSome("SELECT ID, titulo, descricao,username, Votos_Incorretos,Votos_Corretos, Geo_referencia, Fechada from Queixinha inner join CategoriaQueixinha on (ID = queixinha) where username = $1", 
+		[username],
+		function (row) {
+			var categorias =[];
+			access.getCategoriaQueixinha(row.ID, function(r){
+										 categorias[index++] = c;
+			var queix=new queixinha(row.ID, row.titulo, row.descricao, row.username, row.Votos_Corretos,row.Votos_Incorretos,row.Geo_referencia, row.fechada);
+			queix.categorias = categorias;
+			return queix;
+		}}, cb);	
+}
+
 access.getCategoriaQueixinha = function(id, cb){
 	db.SelectSome("SELECT categoria, Queixinha from Comentario where Queixinha = $1", 
 		[id],
@@ -122,7 +149,7 @@ access.newQueixinha = function(queixinha, cb){
         function(err, id) { 
         	if (err)
         		return cb(err, null);
-//falta retornar id 
+
         	if (queixinha.categoria !== undefined){
     			for (var i = queixinha.categoria.length - 1; i >= 0; i--) {
     				access.getCategoria(queixinha.categoria[i], 
@@ -159,8 +186,9 @@ access.newQueixinha = function(queixinha, cb){
 
 
 access.newUser = function(user, cb){
-	var params = [user.username, username.hash, username.salt, username.email, username.gestor];
-    db.ExecuteQuery("INSERT into utilizador(username, hash, salt, email, Gestor) values($1, $2, $3, $4, $5)",
+	var params = [user.username, user.hash, user.salt, user.email, user.gestor];
+	console.log(user)
+    db.ExecuteQuery("INSERT into utilizador(username, hash, salt, email, gestor) values($1, $2, $3, $4, $5)",
         params,
         function(err) { 
         	if (err)

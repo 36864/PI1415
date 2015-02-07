@@ -17,11 +17,11 @@ function dbSelectAll(query, createElem, cb)
 {
     pg.connect(config.getConnString(), function(err, client, done) {
         if(err) 
-            return cb("Error fetching client from pool: " + err);
+            return cb(err);
         client.query(query, function(err, result) {
                 done();
                 if(err) 
-                    return cb("Error running query: " + err);
+                    return cb(err);
                 var elems = result.rows.map(createElem);
                 cb(null, elems);
         });
@@ -32,11 +32,11 @@ function dbSelectOne(query, queryParams, createElem, cb)
 {
     pg.connect(config.getConnString(), function(err, client, done) {
         if(err) 
-            return cb("Error fetching client from pool: " + err);
+            return cb(err);
         client.query(query, queryParams, function(err, result) {
             done();
             if(err) 
-                return cb("Error running query: " + err);
+                return cb(err);
 
             if(result.rowCount == 0) 
                 return cb(null, null);
@@ -52,11 +52,11 @@ function dbSelectSome(query, queryParams, createElem, cb)
 {
     pg.connect(config.getConnString(), function(err, client, done) {
         if(err) 
-            return cb("Error fetching client from pool: " + err);
+            return cb(err);
         client.query(query, queryParams, function(err, result) {
             done();
             if(err) 
-                return cb("Error running query: " + err);
+                return cb(err);
 
             if(result.rowCount == 0) 
                 return cb(null, null);
@@ -70,14 +70,15 @@ function dbSelectSome(query, queryParams, createElem, cb)
 function dbExecuteQuery(query, queryParams, cb) {
     pg.connect(config.getConnString(), function(err, client, done) {
         if(err) 
-            return cb("Error fetching client from pool: " + err);
+            return cb(err);
         client.query(query, queryParams, function(err, result) {
             done();
             if(err) 
-                return cb("Error running query: " + err);
+                return cb( err);
             if(result.rowCount != 1) 
                 return cb("Cannot execute the query: " + query, null);
-            cb(null);
+            console.log(result)
+            cb(null, result.ID);
         });
     });
 }

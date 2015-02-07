@@ -56,12 +56,13 @@ access.getQueixinhas = function (page, cb){
 access.getQueixinha = function (id, cb) {
 	//return queixinha com id correspondente
 	var coments = [];
-	getComentQueixinha(id, function (com){
+	getComentQueixinha(id, function (err, com){
 		coments[com.id] = com; 
 	});
 	var categoria = [];
-	getCategoriaQueixinha(id, function (c){
-		categoria = c;
+	var index =0;
+	getCategoriaQueixinha(id, function (err, c){
+		categoria[index++] = c;
 	})
 	db.dbSelectOne("SELECT id, titulo, descricao, Votos_Corretos, Votos_Incorretos, username, Geo_referencia from Queixinha where id = $1", 
 		[id],
@@ -86,7 +87,7 @@ access.getUser = function (name, cb){
 
 access.getComentQueixinha = function (id, cb){
 	//return user
-	db.dbSelectOne("SELECT id, Id_Queixinha, comentario, username from Comentario where Id_Queixinha = $1", 
+	db.dbSelectSome("SELECT id, Id_Queixinha, comentario, username from Comentario where Id_Queixinha = $1", 
 		[id],
 		function (err, row) {
 			if (err)
@@ -96,7 +97,7 @@ access.getComentQueixinha = function (id, cb){
 };
 
 access.getCategoriaQueixinha = function(id, cb){
-	db.dbSelectOne("SELECT categoria, Queixinha from Comentario where Queixinha = $1", 
+	db.dbSelectSome("SELECT categoria, Queixinha from Comentario where Queixinha = $1", 
 		[id],
 		function (err, row) {
 			if (err)
@@ -124,7 +125,7 @@ access.newQueixinha = function(queixinha, cb){
 
     db.executeQuery("INSERT into queixinha(titulo, descricao, username, Geo_referencia) values($1, $2, $3, $4, $5) returning ID",
         params,
-        function(err) { 
+        function(err, id) { 
         	if (err)
         		cb(err, null);
 //falta retornar id 
@@ -134,28 +135,28 @@ access.newQueixinha = function(queixinha, cb){
     				getCategoria(queixinha.categoria[i], 
     										function (c){ 
     											if (c !== undefined)
-    												newCategoriaQueixinha(c, , 
+    												newCategoriaQueixinha(c, id, 
     															function(err) { 
         															if (err)
         																cb(err, null)
 																	cb(null, queixinha.categoria[i]);
 																});
     				else{
-    					newCategoria(queixinha.categoria[i], function(err) { 
+    					newCategoria(queixinha.categoria[i], function(err, id) { 
         														if (err)
         															cb(err, null)
-																cb(null, queixinha.categoria[i]);
+																cb(null, id);
 															});
-    					newCategoriaQueixinha(c, , function(err) { 
+    					newCategoriaQueixinha(c, id, function(err) { 
         												if (err)
         													cb(err, null)
-														cb(null, queixinha.categoria[i]);	
+														cb(null, c);	
 													});
     				}
     			}); 
         	}
         }
-        cb(null, );});    
+        cb(null, id);});    
 };
 
 //CALLBACK a REVER
@@ -175,10 +176,10 @@ access.newCategoria = function(designacao, cb){
 	var params = [designacao];
     db.executeQuery("INSERT into Categoria(designacao) values($1) returning ID",
         params,
-        function(err) { 
+        function(err, id) { 
         	if (err)
         		cb(err, null);
-        	cb(null, designacao); 
+        	cb(null, id); 
         }
     );
 };

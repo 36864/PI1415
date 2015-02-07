@@ -1,7 +1,10 @@
 var db = require('./dbUtility');
 var conString = "postgres://:pedro@localhost/queixinhaBD";
 
-function queixinha(id, titulo, descricao, autor, Votos_Corretos,Votos_Incorretos,Georef, comnt, categoria)
+
+var access = {};
+
+access.queixinha = function queixinha(id, titulo, descricao, autor, Votos_Corretos,Votos_Incorretos,Georef, comnt, categoria)
 {
 	this.id = id;
 	this.titulo = titulo;
@@ -14,7 +17,7 @@ function queixinha(id, titulo, descricao, autor, Votos_Corretos,Votos_Incorretos
 	this.categoria = categoria;
 }
 
-function utilizador(username, hash, salt, email,gestor)
+access.user = function utilizador(username, hash, salt, email,gestor)
 {
 	this.username = username;
 	this.hash = hash;
@@ -23,7 +26,7 @@ function utilizador(username, hash, salt, email,gestor)
 	this.gestor = gestor;
 }
 
-function comentario(id, idqueixinha, comentario, username)
+access.comment = function comentario(id, idqueixinha, comentario, username)
 {
 	this.id = id;
 	this.idqueixinha = idqueixinha;
@@ -36,7 +39,6 @@ function categoria(id, designacao)
 	this.id = id;
 	this.designacao = designacao;
 }
-
 access.getQueixinhas = function (page, cb){
 	//return lista de queixinhas, pagina page
 	var offset = (page-1) * 10;
@@ -57,7 +59,7 @@ access.getQueixinha = function (id, cb) {
 	});
 	var categoria = [];
 	getCategoriaQueixinha(id, function (c){
-		categoria[] = c;
+		categoria = c;
 	})
 	db.dbSelectOne("SELECT id, titulo, descricao, Votos_Corretos, Votos_Incorretos, username, Geo_referencia from Queixinha where id = $1", 
 		[id],
@@ -87,7 +89,7 @@ access.getComentQueixinha = function (id, cb){
 		function (err, row) {
 			if (err)
 				cb(err, null);
-			cb(null, new comentario(row.id, row.Id_Queixinha, row.comentario, row.username)})
+			cb(null, new comentario(row.id, row.Id_Queixinha, row.comentario, row.username));
 		});	
 };
 
@@ -99,6 +101,20 @@ access.getCategoriaQueixinha = function(id, cb){
 				cb(err, null);
 			cb(null, row.Queixinha)
 		});
-}
+};
+
+
+//funcoes pa criar objects na BD. Chamar callback com o objecto criado
+//recebe objecto incompleto (sem campos gerados, sem comentarios, sem ID)
+//autor vem como objecto user
+//categorias vem como string
+access.newQueixinha = function(queixinha, cb){
+};
+
+access.newUser = function(user, cb){
+	
+};
+
+
 
 module.exports = access;

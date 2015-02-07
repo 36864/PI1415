@@ -1,14 +1,21 @@
 var express = require('express');
 var router = express.Router();
 
-/* GET users listing. */
+
+
+router.use(function(req, res, next) {
+	if(req.path !== '/:id')
+		if(!req.user) return next('router');
+	return next();
+});
+
 router.get('/', function(req, res, next) {
 	//redirect unauthenticated users to index 
 	//res.redirect('index');
 	//show dashboard to authenticated users
 	var user;
 	res.writeHead(200, {'Content-Type' : 'html/plain'});
-	res.render('dashboard', {user: user.name, user.subscribed});
+	res.render('dashboard', {user: req.user});
 	next();
 });
 
@@ -26,22 +33,29 @@ router.get('/:id', function(req, res, next) {
 	//if queixinha doens't exist, 404  next('router');
 	var user;
 	var queixinha;
-	res.render('queixinha', {queixinha: queixinha, user: user);
+	res.render('queixinha', {queixinha: queixinha, user: user});
 });
 
-router.get('/new'), function(req, res, next) {
+router.get('/new', function(req, res, next) {
+	if(!req.user) return next('router');
+	return res.render('novaqueixinha');
 });
 
-router.post('/new'), function(req, res, next) {
+router.post('/new', function(req, res, next) {
+	
+	req.title;
+	req.comment;
+	
 });
 
-router.get('/:id/edit'), function(req, res, next) {
+router.get('/:id/edit', function(req, res, next) {
+	
 });
 
-router.post('/:id/edit'), function(req, res, next) {
+router.post('/:id/edit', function(req, res, next) {
 });
 
-router.post('/:id/vote'), function(req, res, next) {
+router.post('/:id/vote', function(req, res, next) {
 	//check user authentication
 	//res.redirect('index'); 
 	//get vote data from header

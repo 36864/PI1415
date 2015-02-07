@@ -9,7 +9,7 @@ module.exports = {
 ///
 /// Database utility functions
 ///
-var config = require(require('path').resolve(__dirname, "..", "config.js"));
+var config = require(require('path').resolve(__dirname, ".", "config.js"));
 var pg = require("pg");
 ///
 function dbSelectAll(query, createElem, cb)

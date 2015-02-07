@@ -4,11 +4,12 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
-var route_index = require('./routes/index');
-var route_queixinhas = require('./routes/queixinhas');
-var route_account = require('./routes/account');
+var flash = require('./flash');
+var passport = require('passport');
+var session = require('express-session');
+var auth = require('./auth');
 var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -17,13 +18,34 @@ app.set('view engine', 'jade');
 // uncomment after placing your favicon in /public
 //app.use(favicon(__dirname + '/public/favicon.ico'));
 app.use(logger('dev'));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({ secret: 'secret', 
+				resave: false, 
+				saveUninitialized: false 
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash(app));
 
-app.use('/', route_index);
-app.use('/account', route_account);
+app.locals.title = "Queixinhas na Net";
+
+app.use(function(req, res, next) {
+  var reqUrl = req.url;
+  res.locals.isActive = function(url) {
+    return reqUrl == url;
+  }
+  next();
+});
+
+auth(app);
+
+
+var route_idx = require('./routes/index');
+var route_queixinhas = require('./routes/queixinhas');
+app.use('/', route_idx);
 app.use('/queixinhas', route_queixinhas);
 
 // catch 404 and forward to error handler

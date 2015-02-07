@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var db = requier('dbaccess');
+var db = require('../dbaccess');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {

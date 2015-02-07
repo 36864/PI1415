@@ -22,7 +22,7 @@ passport.serializeUser(function(user, done) {
 
 passport.deserializeUser(function(id, done) {
   console.log("deserializeUser");
-  db.User.getById(id, function(err, user)
+  db.getUser(id, function(err, user)
   {
     if(err) return done(err);
 
@@ -36,8 +36,8 @@ passport.deserializeUser(function(id, done) {
 module.exports = function(app)
 {
     app.use(function(req, res, next) {
-      res.locals.user = req.user || new db.User();
-      console.log(req.user);
+      req.user = req.user || new db.user();
+      console.log('USER ' + req.user);
       next();
     });
 
@@ -51,12 +51,18 @@ module.exports = function(app)
                                               failureFlash: true }));
 											  
 	app.get('/register', function (req, res) {
+		if(req.user) return res.redirect('/');
 		return res.render('atuh/register');
 	});
 	
 	app.post('/register', function (req, res) {
-		var user = new db.User(req.user, req.email);
-		pass.hash(req.password, function(err, salt, hash)  {
+		if(req.user) return res.redirect('/');
+		if(req.body.username === '' || req.body.password === '' || req.body.email === '') {
+			res.flash('Please fill out all fields');
+			return res.render('/register');
+		}
+		pass.hash(req.body.password, function(err, salt, hash)  {
+			var user = new user()
 			user.salt = salt;
 			user.hash = hash;
 		});

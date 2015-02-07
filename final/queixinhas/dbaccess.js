@@ -4,7 +4,7 @@ var conString = "postgres://:pedro@localhost/queixinhaBD";
 
 var access = {};
 
-access.queixinha = function queixinha(id, titulo, descricao, autor, Votos_Corretos,Votos_Incorretos,Georef, comnt, categoria)
+access.queixinha = function queixinha(id, titulo, descricao, autor, Votos_Corretos,Votos_Incorretos,Georef, fechada, comnt, categoria)
 {
 	this.id = id;
 	this.titulo = titulo;
@@ -15,6 +15,7 @@ access.queixinha = function queixinha(id, titulo, descricao, autor, Votos_Corret
 	this.Georef = Georef;
 	this.comnt = comnt;
 	this.categoria = categoria;
+	this.fechada = fechada;
 }
 
 access.user = function utilizador(username, hash, salt, email,gestor)
@@ -43,11 +44,11 @@ function categoria(id, designacao)
 access.getQueixinhas = function (page, cb){
 	//return lista de queixinhas, pagina page
 	var offset = (page-1) * 10;
-	db.dbselectAll("SELECT id, titulo, descricao, Votos_Corretos, Votos_Incorretos, username, Geo_referencia from Queixinha LIMIT 10 OFFSET "+offset, 
+	db.dbselectAll("SELECT id, titulo, descricao, Votos_Corretos, Votos_Incorretos, username, Geo_referencia, Fechada from Queixinha LIMIT 10 OFFSET "+offset, 
 		function (err, row) {
 			if (err)
 				cb(err, null);
-			cb (null, new queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_Incorretos, row.Geo_referencia));
+			cb (null, new queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_Incorretos, row.Geo_referencia, row.Fechada));
 		});
 };
 

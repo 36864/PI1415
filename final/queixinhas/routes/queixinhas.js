@@ -1,12 +1,13 @@
 var express = require('express');
 var router = express.Router();
 var db = require('.././dbaccess');
-
+var regex_single = /^\/\d+$/;
+var regex_list = /^\/(\?page=\d*|$)$/;
 
 router.use(function(req, res, next) {
 	console.log('serving ' + req.url + ' to ' + req.user);
 	
-	if(!/^\/\d+$/.test(req.url) && !/^\/(\?page=\d*|$)$/.test(req.url)){		
+	if(!regex_single.test(req.url) && !regex_list.test(req.url)){		
 		console.log('REDIRECTING');
 		if(!req.user.username) return res.redirect('/queixinhas');
 	}
@@ -14,24 +15,42 @@ router.use(function(req, res, next) {
 });
 
 router.get('/', function(req, res, next) {
-	//redirect unauthenticated users to index 
-	//show paged list to authenticated users	
 	var page = 1;
 	if(req.query.page){
-	//	if(user.username)
+		if(req.user.username)
 			page = req.query.page;
 	}
 	console.log('SERVING LIST PAGE ' + page);
-	db.getQueixinhas(page, function(err, list){
-		//if(err) return next('route');
-		return res.render('queixinhas', {list: list, user: req.user, page: page});	
+	db.getQueixinhas(page, function(err, list){		
+		if(err) {
+			console.log(err);
+			return next(err);
+		}
+		db.getUser(req.user.username, function(err, user){
+			if(err) {
+				return next(err);
+			}
+			return res.render('queixinhas', {list: list, user: req.user, page: page});
+		});
 	});
 
 });
 
 router.get('/dashboard', function(req, res, next) {
-	res.writeHead(200, {'Content-Type' : 'html/plain'});
-	return res.render('dashboard', {user: req.user});
+	access.getQueixinhasByUser(req.user.username, function(err, queixasbyuser){
+		if(err) { 
+			console.log(err);
+			return next('rouer');
+		}
+		access.getQueixinhasUserInterest(req.user.username, function(err, interest){
+			if(err) { 
+				console.log(err);
+				return next('rouer');
+			}
+			res.writeHead(200, {'Content-Type' : 'html/plain'});
+			return res.render('dashboard', {user: req.user, queixasUser : queixasbyuser, queixasInterested:interest});
+		});
+	});
 });
 
 router.get('/:id', function(req, res, next) {
@@ -55,7 +74,6 @@ router.get('/:id', function(req, res, next) {
 });
 
 router.get('/new', function(req, res, next) {
-	
 	res.writeHead(200, {'Content-Type':'text/html' });
 	return res.render('novaqueixinha');
 });
@@ -76,9 +94,12 @@ router.post('/new', function(req, res, next) {
 router.get('/:id/edit', function(req, res, next) {
 	db.getQueixinha(req.params.id, function(err, queixa){
 		if(queixa.autor.username !== req.user.username)	return res.redirect('/' + req.params.id);
-		
-		res.writeHead(200, {'Content-Type':'text/html' });
-		return res.render('/edit', {queixinha:queixa, user:req.user});
+		if(err) return next(err);
+		db.getUser(req.user.username, function(err, user){
+			if(err) return next(err);
+			res.writeHead(200, {'Content-Type':'text/html' });
+			return res.render('/edit', {queixinha:queixa, user:user});
+		});
 	});
 });
 
@@ -104,10 +125,17 @@ router.post('/:id/edit', function(req, res, next) {
 
 router.post('/:id/vote', function(req, res, next) {
 	db.getUser(req.user.username, function(err, user){
+		if(err){
+			console.log(err);
+			return next(err);
+		}
 		db.getQueixinha(req.params.id, function(err, queixa){
-			
+		if(err){
+			console.log(err);
+			return next(err);
+		}	
 		res.writeHead(200, {'Content-Type':'text/html' });
-		return res.render('queixinha', {queixa: queixa, voted: user.voted});
+		return res.render('queixinha', { user: user, queixa: queixa, voted: user.voted});
 		});
 	});
 });

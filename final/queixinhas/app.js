@@ -86,7 +86,7 @@ app.use('/queixinhas', route_queixinhas);
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
-    next(err);
+    return next(err);
 });
 
 // error handlers
@@ -96,6 +96,9 @@ app.use(function(req, res, next) {
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
         res.status(err.status || 500);
+		console.log(err);
+		console.log(err.message);
+		console.log(err.status);
         return res.render('error', {
             message: err.message,
             error: err
@@ -107,7 +110,7 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
+    return res.render('error', {
         message: err.message,
         error: {}
     });

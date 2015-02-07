@@ -42,7 +42,7 @@ module.exports = function(app)
     });
 
 
-    app.get('/login', function (req, res) {
+    app.get('/login', function (req, res, next) {
         return res.render('auth/login');
     });
 
@@ -50,12 +50,12 @@ module.exports = function(app)
                                               failureRedirect: '/login',
                                               failureFlash: true }));
 											  
-	app.get('/register', function (req, res) {
+	app.get('/register', function (req, res, next) {
 		if(req.user) return res.redirect('/');
 		return res.render('atuh/register');
 	});
 	
-	app.post('/register', function (req, res) {
+	app.post('/register', function (req, res, next) {
 		if(req.user) return res.redirect('/');
 		if(req.body.username === '' || req.body.password === '' || req.body.email === '') {
 			res.flash('Please fill out all fields');
@@ -68,11 +68,14 @@ module.exports = function(app)
 		});
 		db.newUser(user, function(err, user) {
 			if(err) next('router');
-			return res.redirect('/');
+			req.login(user, function(err){
+				if(err) return res.redirect('/');
+				return res.redirect('/queixinhas/dashboard');
+			});
 		});
 	});
 
-    app.get('/logout', function(req, res) {
+    app.get('/logout', function(req, res, next) {
       req.logout();
       res.redirect('/');
     });

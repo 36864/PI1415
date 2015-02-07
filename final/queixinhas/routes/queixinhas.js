@@ -47,6 +47,8 @@ router.get('/:id', function(req, res, next) {
 });
 
 router.get('/new', function(req, res, next) {
+	
+	res.writeHead(200, {'Content-Type':'text/html' });
 	return res.render('novaqueixinha');
 });
 
@@ -66,6 +68,8 @@ router.post('/new', function(req, res, next) {
 router.get('/:id/edit', function(req, res, next) {
 	db.getQueixinha(req.params.id, function(err, queixa){
 		if(queixa.autor.username !== req.user.username)	return res.redirect('/' + req.params.id);
+		
+		res.writeHead(200, {'Content-Type':'text/html' });
 		return res.render('/edit', {queixinha:queixa, user:req.user});
 	});
 });
@@ -83,6 +87,8 @@ router.post('/:id/edit', function(req, res, next) {
 			queixa.desc = queixaEdit.desc;
 			queixa.closed = queixaEdit.closed;
 			db.editQueixinha(queixa, req.body.comment, user);
+			
+			res.writeHead(200, {'Content-Type':'text/html' });
 			return res.render('/' + req.params.id);
 		});
 	});

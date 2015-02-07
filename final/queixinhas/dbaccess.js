@@ -54,19 +54,26 @@ access.getQueixinhas = function (page, cb){
 access.getQueixinha = function (id, cb) {
 	//return queixinha com id correspondente
 	var coments = [];
-	access.getComentQueixinha(id, function (err, com){
-		coments[com.id] = com; 
+	access.getComentQueixinha(id, function (err, el){
+		if (err)
+			return cb(err, null);
+
+		coments[el.id] = com; 
+
+		var categoria = [];
+		var index =0;
+		access.getCategoriaQueixinha(id, function (err, el){
+			if (err)
+				cb(err, null);
+			categoria[index++] = el;
+	
+		db.SelectOne("SELECT id, titulo, descricao, Votos_Corretos, Votos_Incorretos, username, Geo_referencia, Fechada from Queixinha where id = $1", 
+					[id],
+					function (row) {	
+						return new queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_Incorretos, row.Geo_referencia,row.Fechada,coments, categoria);
+					}, cb);
+		});
 	});
-	var categoria = [];
-	var index =0;
-	access.getCategoriaQueixinha(id, function (err, c){
-		categoria[index++] = c;
-	})
-	db.SelectOne("SELECT id, titulo, descricao, Votos_Corretos, Votos_Incorretos, username, Geo_referencia, Fechada from Queixinha where id = $1", 
-		[id],
-		function (row) {	
-			return new queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_Incorretos, row.Geo_referencia,row.Fechada,coments, categoria);
-		}, cb);
 };
 
 access.getUser = function (name, cb){
@@ -100,7 +107,7 @@ access.getCategoria = function(designacao, cb){
 		[designacao],
 		function (row) {
 			return row.ID;
-		});
+		}, cb);
 };
 
 //funcoes pa criar objects na BD. Chamar callback com o objecto criado

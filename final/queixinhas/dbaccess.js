@@ -54,12 +54,12 @@ access.getQueixinhas = function (page, cb){
 access.getQueixinha = function (id, cb) {
 	//return queixinha com id correspondente
 	var coments = [];
-	acess.getComentQueixinha(id, function (err, com){
+	access.getComentQueixinha(id, function (err, com){
 		coments[com.id] = com; 
 	});
 	var categoria = [];
 	var index =0;
-	acess.getCategoriaQueixinha(id, function (err, c){
+	access.getCategoriaQueixinha(id, function (err, c){
 		categoria[index++] = c;
 	})
 	db.SelectOne("SELECT id, titulo, descricao, Votos_Corretos, Votos_Incorretos, username, Geo_referencia, Fechada from Queixinha where id = $1", 
@@ -119,7 +119,7 @@ access.newQueixinha = function(queixinha, cb){
         	if (queixinha.categoria !== undefined){
     			var idc;
     			for (var i = queixinha.categoria.length - 1; i >= 0; i--) {
-    				acess.getCategoria(queixinha.categoria[i], 
+    				access.getCategoria(queixinha.categoria[i], 
     										function (c){ 
     											if (c !== undefined)
     												newCategoriaQueixinha(c, id, 
@@ -129,12 +129,12 @@ access.newQueixinha = function(queixinha, cb){
 																	cb(null, queixinha.categoria[i]);
 																});
     				else{
-    					acess.newCategoria(queixinha.categoria[i], function(err, id) { 
+    					access.newCategoria(queixinha.categoria[i], function(err, id) { 
         														if (err)
         															cb(err, null)
 																cb(null, id);
 															});
-    					acess.newCategoriaQueixinha(c, id, function(err) { 
+    					access.newCategoriaQueixinha(c, id, function(err) { 
         												if (err)
         													cb(err, null)
 														cb(null, c);	

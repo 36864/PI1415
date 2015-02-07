@@ -105,10 +105,11 @@ access.getQueixinhasUtilizador =function (username, cb){
 			var queix = new queixinha(row.ID, row.titulo, row.descricao, row.username, row.Votos_Corretos,row.Votos_Incorretos,row.Geo_referencia, row.fechada);
 			queix.categorias = categorias;
 			return q;
-		}}, cb);
+		}, cb);
+		},cb);
 }
 
-access.getQueixinhasbyintUser = function (username, cb){
+access.getQueixinhasbyIntUser = function (username, cb){
 	db.SelectSome("SELECT ID, titulo, descricao,username, Votos_Incorretos,Votos_Corretos, Geo_referencia, Fechada from Queixinha inner join CategoriaQueixinha on (ID = queixinha) where username = $1", 
 		[username],
 		function (row) {
@@ -118,11 +119,12 @@ access.getQueixinhasbyintUser = function (username, cb){
 			var queix=new queixinha(row.ID, row.titulo, row.descricao, row.username, row.Votos_Corretos,row.Votos_Incorretos,row.Geo_referencia, row.fechada);
 			queix.categorias = categorias;
 			return queix;
-		}}, cb);	
+		}, cb);	
+	}, cb);
 }
 
 access.getCategoriaQueixinha = function(id, cb){
-	db.SelectSome("SELECT categoria, Queixinha from Comentario where Queixinha = $1", 
+	db.SelectSome("SELECT categoria, Queixinha from CategoriaQueixinha inner join Categoria on where Queixinha = $1", 
 		[id],
 		function (row) {
 			return row.categoria;

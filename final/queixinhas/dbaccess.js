@@ -54,18 +54,18 @@ access.getQueixinhas = function (page, cb){
 access.getQueixinha = function (id, cb) {
 	//return queixinha com id correspondente
 	var coments = [];
-	getComentQueixinha(id, function (err, com){
+	acess.getComentQueixinha(id, function (err, com){
 		coments[com.id] = com; 
 	});
 	var categoria = [];
 	var index =0;
-	getCategoriaQueixinha(id, function (err, c){
+	acess.getCategoriaQueixinha(id, function (err, c){
 		categoria[index++] = c;
 	})
 	db.SelectOne("SELECT id, titulo, descricao, Votos_Corretos, Votos_Incorretos, username, Geo_referencia, Fechada from Queixinha where id = $1", 
 		[id],
 		function (row) {	
-			return new queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_Incorretos, row.Geo_referencia,row.Fechada,coments, categoria))
+			return new queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_Incorretos, row.Geo_referencia,row.Fechada,coments, categoria);
 		}, cb);
 };
 
@@ -119,7 +119,7 @@ access.newQueixinha = function(queixinha, cb){
         	if (queixinha.categoria !== undefined){
     			var idc;
     			for (var i = queixinha.categoria.length - 1; i >= 0; i--) {
-    				getCategoria(queixinha.categoria[i], 
+    				acess.getCategoria(queixinha.categoria[i], 
     										function (c){ 
     											if (c !== undefined)
     												newCategoriaQueixinha(c, id, 
@@ -129,12 +129,12 @@ access.newQueixinha = function(queixinha, cb){
 																	cb(null, queixinha.categoria[i]);
 																});
     				else{
-    					newCategoria(queixinha.categoria[i], function(err, id) { 
+    					acess.newCategoria(queixinha.categoria[i], function(err, id) { 
         														if (err)
         															cb(err, null)
 																cb(null, id);
 															});
-    					newCategoriaQueixinha(c, id, function(err) { 
+    					acess.newCategoriaQueixinha(c, id, function(err) { 
         												if (err)
         													cb(err, null)
 														cb(null, c);	

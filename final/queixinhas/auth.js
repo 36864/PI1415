@@ -89,7 +89,7 @@ module.exports = function(app)
 	app.post('/recover', function(req, res, next) {
 		if(req.user.username) return res.redirect('/');
 		if(req.body.email === ''){
-			return res.render('recover', {error: 'email cannot be null', req.user});
+			return res.render('recover', {error: 'email cannot be null', user: req.user});
 		}
 		
 	});

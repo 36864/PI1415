@@ -56,7 +56,7 @@ access.getQueixinha = function (id, cb) {
 		if (err)
 			return cb(err, null);
 
-		coments[el.id] = com; 
+		coments[el.id] = el; 
 
 		var categoria = [];
 		var index =0;

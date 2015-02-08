@@ -42,8 +42,7 @@ q.fechada = false;
 
 var idqueix;
 var idcategoria;
-var comment ;
-//var com = new db.comment();
+var comment;
 
 db.newQueixinha(q, function(err, id){
 						idqueix = id;

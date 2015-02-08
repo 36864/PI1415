@@ -81,6 +81,19 @@ module.exports = function(app)
 		
 	});
 
+	app.get('/recover', function(req, res, next) {
+		if(req.user.username) return res.redirect('/');
+		return res.render('recover', {user: req.user});
+	});
+	
+	app.post('/recover', function(req, res, next) {
+		if(req.user.username) return res.redirect('/');
+		if(req.body.email === ''){
+			return res.render('recover', {error: 'email cannot be null', req.user});
+		}
+		
+	});
+
     app.get('/logout', function(req, res, next) {
       req.logout();
       res.redirect('/');

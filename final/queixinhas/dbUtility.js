@@ -59,7 +59,7 @@ function dbSelectSome(query, queryParams, createElem, cb)
                 return cb(err);
 
             if(result.rowCount == 0) 
-                return cb(null, null);
+                return cb(new err("RECORD NOT FOUND"), null);
             
             var elem = createElem(result.rows[0]);
             cb(null, elem);

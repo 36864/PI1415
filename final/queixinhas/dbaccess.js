@@ -87,36 +87,39 @@ access.getComentQueixinha = function (id, cb){
 };
 
 access.getQueixinhasUtilizador =function (username, cb){
-	//var index=0;
 	db.SelectSome("SELECT id, titulo, descricao,username, votos_incorretos,votos_corretos, geo_referencia, fechada from queixinha where username = $1", 
 		[username],
 		function (row) {
-			var categorias =[];
-			access.getCategoriaQueixinha(row.id, function(r){
-													categorias = ;
+			//var categorias =[];
 			var queix = new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.votos_corretos,row.votos_incorretos,row.geo_referencia, row.fechada);
-			queix.categorias = categorias;
+			access.getCategoriaQueixinha(row.id,function(err, catgs){
+					if(!err){
+						//categorias = c;					
+						queix.categorias = catgs;
+					}
+				}, cb);
 			return queix;
 		}, cb);
-		},cb);
 }
 
-//TOOOOOOOOOOOOOOOOOOOOOOOOOOOOOODOOOOOOOOOOOOOOOOOOOOOOOO
 access.getQueixinhasbyIntUser = function (username, cb){
 	//var index = 0;
 	db.SelectSome("SELECT id, titulo, descricao,username, votos_incorretos,votos_corretos, geo_referencia, fechada from queixinha inner join categoriaqueixinha on (id = queixinha) where username = $1", 
 		[username],
 		function (row) {
-			var categorias =[];
-			access.getCategoriaQueixinha(row.ID, function(r){
-										 categorias[index++] = c;
-			var queix=new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.votos_corretos,row.votos_incorretos,row.geo_referencia, row.fechada);
-			queix.categorias = categorias;
+			//var categorias =[];
+			var queix = new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.votos_corretos,row.votos_incorretos,row.geo_referencia, row.fechada);
+			access.getCategoriaQueixinha(row.id, function(err, catgs){
+					// categorias[index++] = c;
+					if(!err){
+						//categorias = c;					
+						queix.categorias = catgs;
+					}}, cb);
+					//queix.categorias = categorias;
 			return queix;
-		}, cb);	
-	}, cb);
+		}, cb);
 }
-//TOTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+
 access.getCategoriaQueixinha = function(id, cb){
 	db.SelectSome("SELECT designacao from categoriaqueixinha inner join categoria on (id = categoria) where queixinha = $1", 
 		[id],

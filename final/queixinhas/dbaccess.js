@@ -160,30 +160,26 @@ access.newQueixinha = function(queixinha, cb){
     						if (err)
         				 		return cb(err, null);
     						if (c !== undefined)
-    							newCategoriaQueixinha(c, id, 
-    									function(err) { 
+    							newCategoriaQueixinha(c, id, function(err) { 
         									if (err)
         										return cb(err, null)
-											cb(null, queixinha);
 										});
-    				else{
-    					access.newCategoria(queixinha.categoria[i], 
-    								function(err, id) { 
+    						else{
+    							access.newCategoria(queixinha.categoria[i], function(err, id) { 
         								if (err)
         									return cb(err, null)
         								
-        								access.newCategoriaQueixinha(c, id, 
-        												function(err) { 
-        													if (err)
-        														return cb(err, null);
-															cb(null, queixinha);	
-														});
-										cb(null, queixinha);});
-    				}
-    			}); 
+        								access.newCategoriaQueixinha(c, id, function(err) { 
+        										if (err)
+        											return cb(err, null);
+										});
+								});
+    						}
+    					}); 
+        		}	
         	}
-        }
-        cb(null, queixinha);
+        	queixinha.id = id;
+        	return cb(null, queixinha);
     });    
 };
 

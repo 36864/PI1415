@@ -81,7 +81,7 @@ function dbExecuteQuery(query, queryParams, cb) {
             if(result.rowCount != 1) 
                 return cb(new Error("Cannot executeQuery"), null);
             console.log(result)
-            cb(null, result.ID);
+            cb(null, result.rows[0].id);
         });
     });
 }

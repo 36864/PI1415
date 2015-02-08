@@ -143,9 +143,9 @@ access.getCategoria = function(designacao, cb){
 access.newQueixinha = function(queixinha, cb){
 	var params;
 	if ( !queixinha.fechada)
-		var params = [queixinha.titulo, queixinha.descricao, queixinha.username, queixinha.Georef, false];
+		var params = [queixinha.titulo, queixinha.descricao, queixinha.autor, queixinha.Georef, false];
 	else
-		var params = [queixinha.titulo, queixinha.descricao, queixinha.username, queixinha.Georef, queixinha.fechada];
+		var params = [queixinha.titulo, queixinha.descricao, queixinha.autor, queixinha.Georef, queixinha.fechada];
 
     db.ExecuteQuery("INSERT into queixinha(titulo, descricao, username, geo_referencia, fechada) values($1, $2, $3, $4, $5) returning id",
         params,

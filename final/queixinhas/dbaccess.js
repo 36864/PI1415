@@ -50,21 +50,14 @@ access.getQueixinhas = function (page, cb){
 
 
 access.getQueixinha = function (id, cb) {
-	//return queixinha com id correspondente
 	var coments = [];
-	var i = 0; 
 	access.getComentQueixinha(id, function (err, el){
-		if (err)
-			return cb(err, null);
-
-		coments[i++] = el; 
-
+		if (!err)
+			coments = el; 
 		var categoria = [];
-		var index =0;
 		access.getCategoriaQueixinha(id, function (err, el){
-			if (err)
-				return cb(err, null);
-			categoria[index++] = el;
+			if (!err)
+				categoria = el;
 	
 		db.SelectOne("SELECT id, titulo, descricao, votos_corretos, votos_incorretos, username, geo_referencia, fechada from queixinha where id = $1", 
 					[id],
@@ -94,22 +87,23 @@ access.getComentQueixinha = function (id, cb){
 };
 
 access.getQueixinhasUtilizador =function (username, cb){
-	var index=0;
+	//var index=0;
 	db.SelectSome("SELECT id, titulo, descricao,username, votos_incorretos,votos_corretos, geo_referencia, fechada from queixinha where username = $1", 
 		[username],
 		function (row) {
 			var categorias =[];
-			access.getCategoriaQueixinha(row.ID, function(r){
-													 categorias[index++] = c;
-			var queix = new access.queixinha(row.ID, row.titulo, row.descricao, row.username, row.votos_corretos,row.votos_incorretos,row.geo_referencia, row.fechada);
+			access.getCategoriaQueixinha(row.id, function(r){
+													categorias = ;
+			var queix = new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.votos_corretos,row.votos_incorretos,row.geo_referencia, row.fechada);
 			queix.categorias = categorias;
 			return queix;
 		}, cb);
 		},cb);
 }
 
+//TOOOOOOOOOOOOOOOOOOOOOOOOOOOOOODOOOOOOOOOOOOOOOOOOOOOOOO
 access.getQueixinhasbyIntUser = function (username, cb){
-	var index = 0;
+	//var index = 0;
 	db.SelectSome("SELECT id, titulo, descricao,username, votos_incorretos,votos_corretos, geo_referencia, fechada from queixinha inner join categoriaqueixinha on (id = queixinha) where username = $1", 
 		[username],
 		function (row) {
@@ -122,7 +116,7 @@ access.getQueixinhasbyIntUser = function (username, cb){
 		}, cb);	
 	}, cb);
 }
-
+//TOTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
 access.getCategoriaQueixinha = function(id, cb){
 	db.SelectSome("SELECT designacao from categoriaqueixinha inner join categoria on (id = categoria) where queixinha = $1", 
 		[id],

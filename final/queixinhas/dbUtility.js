@@ -60,8 +60,11 @@ function dbSelectSome(query, queryParams, createElem, cb)
 
             if(result.rowCount == 0) 
                 return cb(new Error("RECORD NOT FOUND"), null);
-            
-            var elem = createElem(result.rows[0]);
+            var elem = [];
+            for (var i = 0; i<result.rows.length; i++) {
+                elem[i] = createElem(result.rows[i]);
+            }
+            //var elem = createEcreateElem(lem(result.rows[0]);
             cb(null, elem);
         });
     });

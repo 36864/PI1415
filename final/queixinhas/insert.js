@@ -39,71 +39,70 @@ var q = new db.queixinha();
 q.titulo = "Trab PI";
 q.username = "Pedro2";
 q.fechada = false;
+
 var idqueix;
+var idcategoria;
+var comment ;
+//var com = new db.comment();
+
 db.newQueixinha(q, function(err, id){
 						idqueix = id;
 						console.log(err);
-});
 
-console.log(idqueix);
-var comment = db.comment(0, idqueix,  "Not Finished", "Miguel2");
+	console.log(idqueix);
+	comment = new db.comment(0, idqueix,  "Not Finished", "Miguel2");
 
-/*comment.idqueixinha = idqP
-comment.comentario = "Not Finished"; 
-comment.username = "Miguel2";*/
-db.newComment(comment, function(err){
+	db.newComment(comment, function(err){
 						console.log(err);
-});
-
-comment = db.comment(0, idqueix, "FDS","Luz2");
-/*comment.idqueixinha = idqueix;
-comment.comentario = "FDS"; 
-comment.username = "Luz2";*/
-db.newComment(comment, function(err){
+	comment = new db.comment(0, idqueix, "FDS","Luz2");
+	db.newComment(comment, function(err){
 						console.log(err);
-});
 
+		db.newCategoria("PI", function(err, id){
+				idcategoria = id;
+				console.log(err);
 
-var idcategoria;
-db.newCategoria("PI", function(err, id){
-							idcategoria = id;
-						console.log(err);
-});
-db.newCategoriaQueixinha(idcategoria, idqueix, function(err){
+				db.newCategoriaQueixinha(idcategoria, idqueix, function(err){
 													console.log(err)
 												});
+		});
+	});
+});
+});
+
 console.log('Servidor');
 q.titulo = "Servidor";
 q.username = "Miguel2";
 q.fechada = false;
+
 db.newQueixinha(q, function(err, id){
 	idqueix = id;
-						console.log(err);
-});
+	console.log(err);
 
-comment = db.comment(0, idqueix, "FDS", "Luz2");
-db.newComment(comment, function(err){
+	comment = new db.comment(0, idqueix, "FDS", "Luz2");
+	db.newComment(comment, function(err){
 						console.log(err);
-});
+	});
 
-db.newCategoriaQueixinha(idcategoria, idqueix, function(err){
+	db.newCategoriaQueixinha(idcategoria, idqueix, function(err){
 													console.log(err)
 												});
+});
 
 console.log('BOOTSTRAP');
 q.titulo = "BOOTSTRAP ?!! N WORK";
 q.username = "Luz2";
 q.fechada = false;
 db.newQueixinha(q, function(err, id){
-							idqueix = id;
-						console.log(err);
-});
+					idqueix = id;
+					console.log(err);
 
-comment = db.comment(0, idqueix,"FDS", "Miguel2");
-db.newComment(comment, function(err){
-						console.log(err);
-});
+		comment = new db.comment(0, idqueix,"FDS", "Miguel2");
+		db.newComment(comment, function(err){
+								console.log(err);
+		});
 
-db.newCategoriaQueixinha(idcategoria, idqueix, function(err){
-													console.log(err)
-												});
+		db.newCategoriaQueixinha(idcategoria, idqueix, function(err){
+														console.log(err)
+														});
+});

@@ -10,14 +10,14 @@ html
 			div.container
 				div.navbar-header
 					button.navbar-toggle(type='button')
-					a(class='navbar-brand', href='index.jade', style='color: black')= title
+					a(class='navbar-brand', href='/', style='color: black')= title
 				div.navbar-form.navbar-right
 					form(action='/login', method='post')
 						div.form-group
-							input.form-control(type='text', placeholder='Nome')
+							input.form-control(type='text', placeholder='Nome', name='username')
 						div.form-group
-							input.form-control(type='password', placeholder='Password')
+							input.form-control(type='password', placeholder='Password', name='password')
 						button(class='btn btn-default', type='submit') Entrar
-						a(class='btn btn-success', href='/register' ,role='button') Registar
+						a(class='btn btn-success', href='/register', role='button') Registar
 						
 		block content

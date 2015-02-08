@@ -1,6 +1,4 @@
 var db = require('./dbUtility');
-var conString = "postgres://:pedro@localhost/queixinhaBD";
-
 
 var access = {};
 
@@ -46,7 +44,7 @@ access.getQueixinhas = function (page, cb){
 	var offset = (page-1) * 10;
 	db.SelectAll("SELECT id, titulo, descricao, votos_corretos, votos_incorretos, username, geo_referencia, fechada from queixinha LIMIT 10 OFFSET "+offset, 
 		function (row) {
-			return new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_incorretos,row.Geo_referencia, row.Fechada);
+			return new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.votos_corretos, row.votos_incorretos,row.geo_referencia, row.fechada);
 		}, cb);
 };
 
@@ -70,7 +68,7 @@ access.getQueixinha = function (id, cb) {
 		db.SelectOne("SELECT id, titulo, descricao, votos_corretos, votos_incorretos, username, geo_referencia, fechada from queixinha where id = $1", 
 					[id],
 					function (row) {	
-						return new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_Incorretos, row.Geo_referencia,row.Fechada,coments, categoria);
+						return new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.votos_corretos, row.votos_incorretos, row.geo_referencia,row.fechada,coments, categoria);
 					}, cb);
 		});
 	});
@@ -90,7 +88,7 @@ access.getComentQueixinha = function (id, cb){
 	db.SelectSome("SELECT id, id_queixinha, comentario, username from comentario where id_queixinha = $1", 
 		[id],
 		function (row) {
-			return new access.comment(row.id, row.Id_Queixinha, row.comentario, row.username);
+			return new access.comment(row.id, row.id_queixinha, row.comentario, row.username);
 		}, cb);	
 };
 
@@ -103,7 +101,7 @@ access.getQueixinhasUtilizador =function (username, cb){
 			var categorias =[];
 			access.getCategoriaQueixinha(row.ID, function(r){
 													 categorias[index++] = c;
-			var queix = new access.queixinha(row.ID, row.titulo, row.descricao, row.username, row.Votos_Corretos,row.Votos_incorretos,row.Geo_referencia, row.fechada);
+			var queix = new access.queixinha(row.ID, row.titulo, row.descricao, row.username, row.votos_corretos,row.votos_incorretos,row.geo_referencia, row.fechada);
 			queix.categorias = categorias;
 			return queix;
 		}, cb);
@@ -118,7 +116,7 @@ access.getQueixinhasbyIntUser = function (username, cb){
 			var categorias =[];
 			access.getCategoriaQueixinha(row.ID, function(r){
 										 categorias[index++] = c;
-			var queix=new access.queixinha(row.ID, row.titulo, row.descricao, row.username, row.Votos_Corretos,row.Votos_incorretos,row.Geo_referencia, row.fechada);
+			var queix=new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.votos_corretos,row.votos_incorretos,row.geo_referencia, row.fechada);
 			queix.categorias = categorias;
 			return queix;
 		}, cb);	
@@ -137,7 +135,7 @@ access.getCategoria = function(designacao, cb){
 	db.SelectOne("SELECT id from categoria where designacao = $1", 
 		[designacao],
 		function (row) {
-			return row.ID;
+			return row.id;
 		}, cb);
 };
 

@@ -39,7 +39,7 @@ function dbSelectOne(query, queryParams, createElem, cb)
                 return cb(err);
 
             if(result.rowCount == 0) 
-                return cb(null, null);
+                return cb(new Error("RECORD NOT FOUND"), null);
             if(result.rowCount > 1)  
                 return cb("More than one element selected.", null);
             var elem = createElem(result.rows[0]);
@@ -76,7 +76,7 @@ function dbExecuteQuery(query, queryParams, cb) {
             if(err) 
                 return cb( err);
             if(result.rowCount != 1) 
-                return cb("Cannot execute the query: " + query, null);
+                return cb(new Error("Cannot executeQuery"), null);
             console.log(result)
             cb(null, result.ID);
         });

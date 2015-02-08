@@ -1,7 +1,23 @@
 doctype html
 html
-  head
-    title= title
-    link(rel='stylesheet', href='/stylesheets/style.css')
-  body
-    block content
+	head
+		title= title
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		link(rel='stylesheet', href='/css/bootstrap.css')
+		script(src='/js/bootstrap.js')
+	body
+		nav.navbar-fixed-top(style='background-color: lightblue')
+			div.container
+				div.navbar-header
+					button.navbar-toggle(type='button')
+					a(class='navbar-brand', href='index.jade', style='color: black')= title
+				div.navbar-form.navbar-right
+					form
+						div.form-group
+							input.form-control(type='text', placeholder='Nome')
+						div.form-group
+							input.form-control(type='password', placeholder='Password')
+						button(class='btn btn-default', type='submit') Entrar
+						a(class='btn btn-success', href='/register' ,role='button') Registar
+						
+		block content

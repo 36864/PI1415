@@ -35,7 +35,7 @@ passport.deserializeUser(function(username, done) {
 module.exports = function(app)
 {
     app.use(function(req, res, next) {
-      req.user = req.user || db.user();
+      req.user = req.user || new db.user();
       console.log('USER ' + req.user);
       next();
     });

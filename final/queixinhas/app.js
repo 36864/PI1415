@@ -12,7 +12,7 @@ var app = express();
 var pass = require('pwd');
 
 var db = require('./dbaccess')
-var insert = require('./insert')
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -44,8 +44,6 @@ app.use(function(req, res, next) {
 
 auth(app);
 
-//A inserir
-insert;
 
 console.log('JA N HA MAIS')
 var route_idx = require('./routes/index');

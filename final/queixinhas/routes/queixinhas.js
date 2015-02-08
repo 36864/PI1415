@@ -25,12 +25,13 @@ router.get('/', function(req, res, next) {
 	console.log('SERVING LIST PAGE ' + page);
 	db.getQueixinhas(page, function(err, list){		
 		if(err) {
-			console.log(err);
-			return next(err);
+			if(err.message !== 'RECORD NOT FOUND')
+				return next(err);
 		}
 		db.getUser(req.user.username, function(err, user){
 			if(err) {
-				return next(err);
+				if(err.message !== 'RECORD NOT FOUND')
+					return next(err);
 			}
 			return res.render('queixinhas', {list: list, user: req.user, page: page});
 		});
@@ -40,16 +41,17 @@ router.get('/', function(req, res, next) {
 
 router.get('/dashboard', function(req, res, next) {
 	db.getQueixinhasUtilizador(req.user.username, function(err, queixasbyuser){
-		if(err) {
-			console.log(err);
+		if(err) {			
+			if(err.message !== 'RECORD NOT FOUND')
 			return next(err);
 		}
 		db.getQueixinhasbyIntUser(req.user.username, function(err, interest){
 			if(err) { 
-				console.log(err);
+				if(err.message !== 'RECORD NOT FOUND')
 				return next(err);
 			}
-			res.writeHead(200, {'Content-Type' : 'html/plain'});
+			console.log(queixasbyuser)
+			console.log(interest);
 			return res.render('dashboard', {user: req.user, queixasUser : queixasbyuser, queixasInterested:interest});
 		});	
 	});
@@ -62,40 +64,31 @@ router.get('/new', function(req, res, next) {
 });
 
 router.post('/new', function(req, res, next) {
-	var queixa = new db.queixinha({
+	var queixa = {
 		titulo: req.body.title, 
 		descricao: req.body.desc,
 		autor: req.user,
 		georef: req.body.geo,
-		categorias:
-		req.body.categorias
-		});
-	
-	if(queixa.titulo = "") {
+		categorias: req.body.categorias
+		};
+	if(queixa.titulo === '') {
 		res.flash('Título não pode ser vazio');
-		return res.render('/new', queixa);
+		return res.render('novaqueixinha', {user: user, queixa: queixa});
 	}
-	console.log('IN NEW');
-	console.log(queixa);
 	db.newQueixinha(queixa, function(err, queixa) {
 			if(err) return next(err);
-			return res.redirect('/' + queixa.id);
-		});
-	
+			return res.redirect('/queixinhas/' + queixa.id);
+	});
 });
 
 router.get('/:id', function(req, res, next) {
 	if(!req.user) req.user.username = '';
-	db.getUser(req.user.username, function(err, user){
-		if(err) console.log('ERROR 1: ' + err);
+	db.getUser(req.user.username, function(err, user) {
+		if(err && err.message !== 'RECORD NOT FOUND') return next(err);
 		db.getQueixinha(req.params.id, function(err, queixa){
-			if(err) console.log('ERROR : ' + err);
-			if(err) {
-				res.flash(err);
-				return res.redirect('/');
-			}
+			if(err && err.message !== 'RECORD NOT FOUND') return res.redirect('/queixinhas');
 			return res.render('queixinha', {queixinha: queixa, user: user});
-	});
+		});
 	});
 });
 
@@ -103,11 +96,10 @@ router.get('/:id', function(req, res, next) {
 router.get('/:id/edit', function(req, res, next) {
 	db.getQueixinha(req.params.id, function(err, queixa){
 		if(err) return next(err);	
-		if(queixa.autor.username !== req.user.username)	return res.redirect('/' + req.params.id);
+		if(queixa.autor !== req.user.username)	return res.redirect('/' + req.params.id);
 		if(err) return next(err);
 		db.getUser(req.user.username, function(err, user){
 			if(err) return next(err);
-			res.writeHead(200, {'Content-Type':'text/html' });
 			return res.render('/edit', {queixinha:queixa, user:user});
 		});
 	});
@@ -116,7 +108,7 @@ router.get('/:id/edit', function(req, res, next) {
 router.post('/:id/edit', function(req, res, next) {
 	db.getQueixinha(req.params.id, function(err, queixa) {
 		db.getUser(req.user.username, function(err, user) {
-			if(!user.gestor && queixa.autor.username !== req.user.username) return res.redirect('/' + req.params.id);
+			if(!user.gestor && queixa.autor !== req.user.username) return res.redirect('/' + req.params.id);
 			var queixaEdit = new db.queixinha(null, req.body.title, req.body.desc, req.user, null, null, req.body.geo, null, req.body.categorias, req.body.closed);
 			if(queixaEdit.titulo = "") {
 				res.flash('Título não pode ser vazio');

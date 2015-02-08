@@ -55,10 +55,39 @@ router.get('/dashboard', function(req, res, next) {
 	});
 });
 
+
+router.get('/new', function(req, res, next) {
+	console.log('GOT TO NEW');
+	return res.render('novaqueixinha', { user: req.user});
+});
+
+router.post('/new', function(req, res, next) {
+	var queixa = new db.queixinha({
+		titulo: req.body.title, 
+		descricao: req.body.desc,
+		autor: req.user,
+		georef: req.body.geo,
+		categorias:
+		req.body.categorias
+		});
+	
+	if(queixa.titulo = "") {
+		res.flash('Título não pode ser vazio');
+		return res.render('/new', queixa);
+	}
+	console.log('IN NEW');
+	console.log(queixa);
+	db.newQueixinha(queixa, function(err, queixa) {
+			if(err) return next(err);
+			return res.redirect('/' + queixa.id);
+		});
+	
+});
+
 router.get('/:id', function(req, res, next) {
 	if(!req.user) req.user.username = '';
 	db.getUser(req.user.username, function(err, user){
-		if(err) console.log('ERROR : ' + err);
+		if(err) console.log('ERROR 1: ' + err);
 		db.getQueixinha(req.params.id, function(err, queixa){
 			if(err) console.log('ERROR : ' + err);
 			if(err) {
@@ -70,26 +99,10 @@ router.get('/:id', function(req, res, next) {
 	});
 });
 
-router.get('/new', function(req, res, next) {
-	res.writeHead(200, {'Content-Type':'text/html' });
-	return res.render('novaqueixinha', { user: req.user});
-});
-
-router.post('/new', function(req, res, next) {
-	var queixa = new db.queixinha(null, req.body.title, req.body.desc, req.user, null, null, req.body.geo, null, req.body.categorias);
-	
-	if(queixa.titulo = "") {
-		res.flash('Título não pode ser vazio');
-		return res.render('/new', queixa);
-	}
-	access.newQueixinha(queixa, new function(err, queixa) {
-			return res.redirect('/' + queixa.id);
-		});
-	
-});
 
 router.get('/:id/edit', function(req, res, next) {
 	db.getQueixinha(req.params.id, function(err, queixa){
+		if(err) return next(err);	
 		if(queixa.autor.username !== req.user.username)	return res.redirect('/' + req.params.id);
 		if(err) return next(err);
 		db.getUser(req.user.username, function(err, user){
@@ -107,15 +120,14 @@ router.post('/:id/edit', function(req, res, next) {
 			var queixaEdit = new db.queixinha(null, req.body.title, req.body.desc, req.user, null, null, req.body.geo, null, req.body.categorias, req.body.closed);
 			if(queixaEdit.titulo = "") {
 				res.flash('Título não pode ser vazio');
-				return res.render('/' + req.params.id + '/new', queixa);
+				return res.render('/' + req.params.id + '/edit', {user: user, queixa: queixa});
 			}
-			queixa.title = queixaEdit.title;
-			queixa.desc = queixaEdit.desc;
-			queixa.closed = queixaEdit.closed;
+			queixa.titulo = queixaEdit.titulo;
+			queixa.descricao = queixaEdit.descricao;
+			queixa.categorias = queixaEdit.categorias;
+			queixa.fechada = queixaEdit.fechada;
 			db.editQueixinha(queixa, req.body.comment, user);
-			
-			res.writeHead(200, {'Content-Type':'text/html' });
-			return res.render('/' + req.params.id);
+			return res.redirect('/' + queixa.id);
 		});
 	});
 });

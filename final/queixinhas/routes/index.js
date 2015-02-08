@@ -11,7 +11,7 @@ router.get('/', function(req, res, next) {
 	console.log('no user');
 	db.getQueixinhas(1, function(err, list){
 		if(err) return res.render('index');
-		return res.render('index', { queixas: list });
+		return res.render('index', { queixas: list , user: req.user});
 	});
 	
 });

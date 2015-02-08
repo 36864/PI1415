@@ -145,7 +145,7 @@ access.getCategoria = function(designacao, cb){
 //categorias vem como string
 access.newQueixinha = function(queixinha, cb){
 	var params;
-	if ( queixinha.fechada === null)
+	if ( !queixinha.fechada)
 		var params = [queixinha.titulo, queixinha.descricao, queixinha.username, queixinha.Georef, false];
 	else
 		var params = [queixinha.titulo, queixinha.descricao, queixinha.username, queixinha.Georef, queixinha.fechada];

@@ -43,7 +43,7 @@ module.exports = function(app)
 
 
     app.get('/login', function (req, res, next) {
-        return res.render('auth/login');
+        return res.render('login');
     });
 
     app.post('/login', passport.authenticate('local', { successRedirect: '/',

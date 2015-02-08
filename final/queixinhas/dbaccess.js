@@ -44,9 +44,9 @@ function categoria(id, designacao)
 access.getQueixinhas = function (page, cb){
 	//return lista de queixinhas, pagina page
 	var offset = (page-1) * 10;
-	db.SelectAll("SELECT id, titulo, descricao, Votos_Corretos, Votos_Incorretos, username, Geo_referencia, Fechada from Queixinha LIMIT 10 OFFSET "+offset, 
+	db.SelectAll("SELECT id, titulo, descricao, Votos_Corretos, Votos_incorretos, username, Geo_referencia, Fechada from Queixinha LIMIT 10 OFFSET "+offset, 
 		function (row) {
-			return new queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_Incorretos,row.Geo_referencia, row.Fechada);
+			return new queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_incorretos,row.Geo_referencia, row.Fechada);
 		}, cb);
 };
 
@@ -97,13 +97,13 @@ access.getComentQueixinha = function (id, cb){
 //faltas categorias
 access.getQueixinhasUtilizador =function (username, cb){
 	var index=0;
-	db.SelectSome("SELECT ID, titulo, descricao,username, Votos_Incorretos,Votos_Corretos, Geo_referencia, Fechada from Queixinha where username = $1", 
+	db.SelectSome("SELECT ID, titulo, descricao,username, Votos_incorretos,Votos_Corretos, Geo_referencia, Fechada from Queixinha where username = $1", 
 		[username],
 		function (row) {
 			var categorias =[];
 			access.getCategoriaQueixinha(row.ID, function(r){
 													 categorias[index++] = c;
-			var queix = new queixinha(row.ID, row.titulo, row.descricao, row.username, row.Votos_Corretos,row.Votos_Incorretos,row.Geo_referencia, row.fechada);
+			var queix = new queixinha(row.ID, row.titulo, row.descricao, row.username, row.Votos_Corretos,row.Votos_incorretos,row.Geo_referencia, row.fechada);
 			queix.categorias = categorias;
 			return queix;
 		}, cb);
@@ -112,13 +112,13 @@ access.getQueixinhasUtilizador =function (username, cb){
 
 access.getQueixinhasbyIntUser = function (username, cb){
 	var index = 0;
-	db.SelectSome("SELECT ID, titulo, descricao,username, Votos_Incorretos,Votos_Corretos, Geo_referencia, Fechada from Queixinha inner join CategoriaQueixinha on (ID = queixinha) where username = $1", 
+	db.SelectSome("SELECT ID, titulo, descricao,username, Votos_incorretos,Votos_Corretos, Geo_referencia, Fechada from Queixinha inner join CategoriaQueixinha on (ID = queixinha) where username = $1", 
 		[username],
 		function (row) {
 			var categorias =[];
 			access.getCategoriaQueixinha(row.ID, function(r){
 										 categorias[index++] = c;
-			var queix=new queixinha(row.ID, row.titulo, row.descricao, row.username, row.Votos_Corretos,row.Votos_Incorretos,row.Geo_referencia, row.fechada);
+			var queix=new queixinha(row.ID, row.titulo, row.descricao, row.username, row.Votos_Corretos,row.Votos_incorretos,row.Geo_referencia, row.fechada);
 			queix.categorias = categorias;
 			return queix;
 		}, cb);	

@@ -72,7 +72,7 @@ router.get('/:id', function(req, res, next) {
 
 router.get('/new', function(req, res, next) {
 	res.writeHead(200, {'Content-Type':'text/html' });
-	return res.render('novaqueixinha');
+	return res.render('novaqueixinha', { user: req.user});
 });
 
 router.post('/new', function(req, res, next) {

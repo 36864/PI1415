@@ -56,23 +56,30 @@ module.exports = function(app)
 	});
 	
 	app.post('/register', function (req, res, next) {
-		if(req.user) return res.redirect('/');
+		if(req.user.username) return res.redirect('/');
 		if(req.body.username === '' || req.body.password === '' || req.body.email === '') {
 			res.flash('Please fill out all fields');
 			return res.render('/register');
 		}
+		
+		var user = new db.user();
 		pass.hash(req.body.password, function(err, salt, hash)  {
-			var user = new user()
+			user.username = req.body.username;
 			user.salt = salt;
 			user.hash = hash;
-		});
-		db.newUser(user, function(err, user) {
-			if(err) next('router');
-			req.login(user, function(err){
-				if(err) return res.redirect('/');
-				return res.redirect('/queixinhas/dashboard');
+			user.email = req.body.email;
+			user.gestor = false;
+			console.log(user);
+			db.newUser(user, function(err, user) {
+				if(err) return next(err);
+				req.login(user, function(err){
+					console.log(err);
+					if(err) return res.redirect('/');
+					return res.redirect('/queixinhas/dashboard');
 			});
 		});
+		});
+		
 	});
 
     app.get('/logout', function(req, res, next) {

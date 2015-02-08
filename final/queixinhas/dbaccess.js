@@ -8,9 +8,9 @@ access.queixinha = function queixinha(id, titulo, descricao, autor, Votos_Corret
 	this.titulo = titulo;
 	this.descricao = descricao;
 	this.autor = autor;
-	this.Votos_Corretos = Votos_Corretos;
-	this.Votos_Incorretos = Votos_Incorretos;
-	this.Georef = Georef;
+	this.votos_corretos = Votos_Corretos;
+	this.votos_incorretos = Votos_Incorretos;
+	this.georef = Georef;
 	this.comnt = comnt;
 	this.categorias = categorias;
 	this.fechada = fechada;
@@ -52,11 +52,12 @@ access.getQueixinhas = function (page, cb){
 access.getQueixinha = function (id, cb) {
 	//return queixinha com id correspondente
 	var coments = [];
+	var i = 0; 
 	access.getComentQueixinha(id, function (err, el){
 		if (err)
 			return cb(err, null);
 
-		coments[el.id] = el; 
+		coments[i++] = el; 
 
 		var categoria = [];
 		var index =0;
@@ -92,7 +93,6 @@ access.getComentQueixinha = function (id, cb){
 		}, cb);	
 };
 
-//faltas categorias
 access.getQueixinhasUtilizador =function (username, cb){
 	var index=0;
 	db.SelectSome("SELECT id, titulo, descricao,username, votos_incorretos,votos_corretos, geo_referencia, fechada from queixinha where username = $1", 
@@ -144,7 +144,11 @@ access.getCategoria = function(designacao, cb){
 //autor vem como objecto user
 //categorias vem como string
 access.newQueixinha = function(queixinha, cb){
-	var params = [queixinha.titulo, queixinha.descricao, queixinha.username, queixinha.Georef, queixinha.fechada];
+	var params;
+	if ( queixinha.fechada === null)
+		var params = [queixinha.titulo, queixinha.descricao, queixinha.username, queixinha.Georef, false];
+	else
+		var params = [queixinha.titulo, queixinha.descricao, queixinha.username, queixinha.Georef, queixinha.fechada];
 
     db.ExecuteQuery("INSERT into queixinha(titulo, descricao, username, geo_referencia, fechada) values($1, $2, $3, $4, $5) returning id",
         params,

@@ -4,8 +4,7 @@ var db = require('../dbaccess');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-	console.log(req.user);
-	if(req.user.username) return res.redirect('/queixinhas');
+	console.log(req.user);	
 	//check user authentication
 	//get list of top/most recent entries for unauthenticated users
 	//else get list of entries, add paging

@@ -9,7 +9,7 @@ passport.use(new LocalStrategy(function(username, password, done){
       // TODO: Check password
 	  pass.hash(password, user.salt, function(err, hash){
 		if(err || hash !== user.hash) return done(null, false);
-		console.log("INFO: user", user.id, "has logged in.", user);
+		console.log("INFO: user", user.username, "has logged in.", user);
 		return done(null, user);
 	  });
     });
@@ -17,12 +17,12 @@ passport.use(new LocalStrategy(function(username, password, done){
 
 passport.serializeUser(function(user, done) {
   console.log("serializeUser");
-  done(null, user.id);
+  done(null, user.username);
 });
 
-passport.deserializeUser(function(id, done) {
+passport.deserializeUser(function(username, done) {
   console.log("deserializeUser");
-  db.getUser(id, function(err, user)
+  db.getUser(username, function(err, user)
   {
     if(err) return done(err);
 
@@ -46,8 +46,8 @@ module.exports = function(app)
         return res.render('login');
     });
 
-    app.post('/login', passport.authenticate('local', { successRedirect: '/',
-                                              failureRedirect: '/login',
+    app.post('/login', passport.authenticate('local', { successRedirect: '/queixinhas/dashboard',
+                                              failureRedirect: '/',
                                               failureFlash: true }));
 											  
 	app.get('/register', function (req, res, next) {

@@ -46,7 +46,7 @@ access.getQueixinhas = function (page, cb){
 	var offset = (page-1) * 10;
 	db.SelectAll("SELECT id, titulo, descricao, votos_corretos, votos_incorretos, username, geo_referencia, fechada from queixinha LIMIT 10 OFFSET "+offset, 
 		function (row) {
-			return new queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_incorretos,row.Geo_referencia, row.Fechada);
+			return new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_incorretos,row.Geo_referencia, row.Fechada);
 		}, cb);
 };
 
@@ -70,7 +70,7 @@ access.getQueixinha = function (id, cb) {
 		db.SelectOne("SELECT id, titulo, descricao, votos_corretos, votos_incorretos, username, geo_referencia, fechada from queixinha where id = $1", 
 					[id],
 					function (row) {	
-						return new queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_Incorretos, row.Geo_referencia,row.Fechada,coments, categoria);
+						return new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.Votos_Corretos, row.Votos_Incorretos, row.Geo_referencia,row.Fechada,coments, categoria);
 					}, cb);
 		});
 	});
@@ -81,7 +81,7 @@ access.getUser = function (name, cb){
 	db.SelectOne("SELECT username, hash, salt, email, gestor from utilizador where username = $1",
 		[name], 
 		function (row) {
-			return new utilizador(row.username, row.hash, row.salt, row.email, row.gestor );
+			return new access.user(row.username, row.hash, row.salt, row.email, row.gestor );
 		}, cb);	
 };
 
@@ -90,7 +90,7 @@ access.getComentQueixinha = function (id, cb){
 	db.SelectSome("SELECT id, id_queixinha, comentario, username from comentario where id_queixinha = $1", 
 		[id],
 		function (row) {
-			return new comentario(row.id, row.Id_Queixinha, row.comentario, row.username);
+			return new access.comment(row.id, row.Id_Queixinha, row.comentario, row.username);
 		}, cb);	
 };
 
@@ -103,7 +103,7 @@ access.getQueixinhasUtilizador =function (username, cb){
 			var categorias =[];
 			access.getCategoriaQueixinha(row.ID, function(r){
 													 categorias[index++] = c;
-			var queix = new queixinha(row.ID, row.titulo, row.descricao, row.username, row.Votos_Corretos,row.Votos_incorretos,row.Geo_referencia, row.fechada);
+			var queix = new access.queixinha(row.ID, row.titulo, row.descricao, row.username, row.Votos_Corretos,row.Votos_incorretos,row.Geo_referencia, row.fechada);
 			queix.categorias = categorias;
 			return queix;
 		}, cb);
@@ -118,7 +118,7 @@ access.getQueixinhasbyIntUser = function (username, cb){
 			var categorias =[];
 			access.getCategoriaQueixinha(row.ID, function(r){
 										 categorias[index++] = c;
-			var queix=new queixinha(row.ID, row.titulo, row.descricao, row.username, row.Votos_Corretos,row.Votos_incorretos,row.Geo_referencia, row.fechada);
+			var queix=new access.queixinha(row.ID, row.titulo, row.descricao, row.username, row.Votos_Corretos,row.Votos_incorretos,row.Geo_referencia, row.fechada);
 			queix.categorias = categorias;
 			return queix;
 		}, cb);	
@@ -146,9 +146,9 @@ access.getCategoria = function(designacao, cb){
 //autor vem como objecto user
 //categorias vem como string
 access.newQueixinha = function(queixinha, cb){
-	var params = [queixinha.titulo, queixinha.descricao, queixinha.username, queixinha.Georef];
+	var params = [queixinha.titulo, queixinha.descricao, queixinha.username, queixinha.Georef, queixinha.fechada];
 
-    db.ExecuteQuery("INSERT into queixinha(titulo, descricao, username, geo_referencia) values($1, $2, $3, $4, $5) returning id",
+    db.ExecuteQuery("INSERT into queixinha(titulo, descricao, username, geo_referencia, fechada) values($1, $2, $3, $4, $5) returning id",
         params,
         function(err, id) { 
         	if (err)
@@ -196,9 +196,9 @@ access.newUser = function(user, cb){
         params,
         function(err) { 
         	if (err)
-        		cb(err, null)
+        		return cb(err, null)
 
-        	cb(err, user.utilizador);
+        	cb(null, user.utilizador);
         });
 };
 

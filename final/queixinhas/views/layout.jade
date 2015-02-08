@@ -12,7 +12,7 @@ html
 					button.navbar-toggle(type='button')
 					a(class='navbar-brand', href='index.jade', style='color: black')= title
 				div.navbar-form.navbar-right
-					form
+					form(action='/login', method='post')
 						div.form-group
 							input.form-control(type='text', placeholder='Nome')
 						div.form-group

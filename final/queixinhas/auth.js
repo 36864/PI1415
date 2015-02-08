@@ -9,7 +9,7 @@ passport.use(new LocalStrategy(function(username, password, done){
       // TODO: Check password
 	  pass.hash(password, user.salt, function(err, hash){
 		if(err || hash !== user.hash) return done(null, false);
-		console.log("INFO: user", user.id, "has logged in.", user);
+		console.log("INFO: user", user.username, "has logged in.", user);
 		return done(null, user);
 	  });
     });
@@ -17,12 +17,12 @@ passport.use(new LocalStrategy(function(username, password, done){
 
 passport.serializeUser(function(user, done) {
   console.log("serializeUser");
-  done(null, user.id);
+  done(null, user.username);
 });
 
-passport.deserializeUser(function(id, done) {
+passport.deserializeUser(function(username, done) {
   console.log("deserializeUser");
-  db.getUser(id, function(err, user)
+  db.getUser(username, function(err, user)
   {
     if(err) return done(err);
 
@@ -46,8 +46,8 @@ module.exports = function(app)
         return res.render('login');
     });
 
-    app.post('/login', passport.authenticate('local', { successRedirect: '/',
-                                              failureRedirect: '/login',
+    app.post('/login', passport.authenticate('local', { successRedirect: '/queixinhas/dashboard',
+                                              failureRedirect: '/',
                                               failureFlash: true }));
 											  
 	app.get('/register', function (req, res, next) {
@@ -56,23 +56,30 @@ module.exports = function(app)
 	});
 	
 	app.post('/register', function (req, res, next) {
-		if(req.user) return res.redirect('/');
+		if(req.user.username) return res.redirect('/');
 		if(req.body.username === '' || req.body.password === '' || req.body.email === '') {
 			res.flash('Please fill out all fields');
 			return res.render('/register');
 		}
+		
+		var user = new db.user();
 		pass.hash(req.body.password, function(err, salt, hash)  {
-			var user = new user()
+			user.username = req.body.username;
 			user.salt = salt;
 			user.hash = hash;
-		});
-		db.newUser(user, function(err, user) {
-			if(err) next('router');
-			req.login(user, function(err){
-				if(err) return res.redirect('/');
-				return res.redirect('/queixinhas/dashboard');
+			user.email = req.body.email;
+			user.gestor = false;
+			console.log(user);
+			db.newUser(user, function(err, user) {
+				if(err) return next(err);
+				req.login(user, function(err){
+					console.log(err);
+					if(err) return res.redirect('/');
+					return res.redirect('/queixinhas/dashboard');
 			});
 		});
+		});
+		
 	});
 
     app.get('/logout', function(req, res, next) {

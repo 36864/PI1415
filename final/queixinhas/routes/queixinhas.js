@@ -8,8 +8,10 @@ router.use(function(req, res, next) {
 	console.log('serving ' + req.url + ' to ' + req.user);
 	
 	if(!regex_single.test(req.url) && !regex_list.test(req.url)){		
+	if(!req.user.username){
 		console.log('REDIRECTING');
-		if(!req.user.username) return res.redirect('/queixinhas');
+		return res.redirect('/queixinhas');
+	}
 	}
 	return next();
 });
@@ -37,28 +39,25 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/dashboard', function(req, res, next) {
-	access.getQueixinhasByUser(req.user.username, function(err, queixasbyuser){
-		if(err) { 
+	db.getQueixinhasUtilizador(req.user.username, function(err, queixasbyuser){
+		if(err) {
 			console.log(err);
-			return next('rouer');
+			return next(err);
 		}
-		access.getQueixinhasUserInterest(req.user.username, function(err, interest){
+		db.getQueixinhasbyIntUser(req.user.username, function(err, interest){
 			if(err) { 
 				console.log(err);
-				return next('rouer');
+				return next(err);
 			}
 			res.writeHead(200, {'Content-Type' : 'html/plain'});
 			return res.render('dashboard', {user: req.user, queixasUser : queixasbyuser, queixasInterested:interest});
-		});
+		});	
 	});
 });
 
 router.get('/:id', function(req, res, next) {
-	console.log('GOT TO ID PAGE');
-	console.log(req.user);
 	if(!req.user) req.user.username = '';
 	db.getUser(req.user.username, function(err, user){
-		console.log('GOT USER');
 		if(err) console.log('ERROR : ' + err);
 		db.getQueixinha(req.params.id, function(err, queixa){
 			if(err) console.log('ERROR : ' + err);
@@ -66,8 +65,6 @@ router.get('/:id', function(req, res, next) {
 				res.flash(err);
 				return res.redirect('/');
 			}
-			console.log('GOT QUEIXINHA' );
-			console.log(err + ' ; ' + queixa + ' ; ' + user);
 			return res.render('queixinha', {queixinha: queixa, user: user});
 	});
 	});
@@ -75,7 +72,7 @@ router.get('/:id', function(req, res, next) {
 
 router.get('/new', function(req, res, next) {
 	res.writeHead(200, {'Content-Type':'text/html' });
-	return res.render('novaqueixinha');
+	return res.render('novaqueixinha', { user: req.user});
 });
 
 router.post('/new', function(req, res, next) {

@@ -12,7 +12,7 @@ var app = express();
 var pass = require('pwd');
 
 var db = require('./dbaccess')
-
+var insert = require('./insert')
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -44,37 +44,8 @@ app.use(function(req, res, next) {
 
 auth(app);
 
-function cnuser (req, res, email, g) {
-		var user = new db.user();
-		user.username = req;
-		user.email = email;
-		user.gestor = g;
-console.log('DENTROCOM USER')
-		if(req.user) return res.redirect('/');
-		if(req === '' || res === '' || email === '') {
-			res.flash('Please fill out all fields');
-			return res.render('/register');
-		}
-		pass.hash(res, function(err, salt, hash)  {
-			//var user = new db.user()
-			user.salt = salt;
-			user.hash = hash;
-		
-	console.log('JA TEM HASHSALT')
-		db.newUser(user, function(err, user) {
-			if(err) 
-				console.log(err);
-				//next('router');
-			//return res.redirect('/');
-			console.log ('Sucesso');
-		});
-		});
-		console.log('CRIOU')
-};
-console.log('voucriaR')
-cnuser("Pedro","ped", "a36832@alunos.isel.pt", true);
-cnuser("Miguel","mig", "a36864@alunos.isel.pt", true);
-cnuser("Luz","luz", "a36919@alunos.isel.pt", true);
+//A inserir
+insert;
 
 console.log('JA N HA MAIS')
 var route_idx = require('./routes/index');

@@ -35,7 +35,7 @@ access.comment = function comentario(id, idqueixinha, comentario, username)
 	this.username = username;
 }
 
-function categoria(id, designacao)
+access.categoria = function categoria(id, designacao)
 {
 	this.id = id;
 	this.designacao = designacao;
@@ -165,7 +165,7 @@ access.newQueixinha = function(queixinha, cb){
     									function(err) { 
         									if (err)
         										return cb(err, null)
-											cb(null, queixinha.categoria[i]);
+											cb(null, queixinha);
 										});
     				else{
     					access.newCategoria(queixinha.categoria[i], 
@@ -177,28 +177,27 @@ access.newQueixinha = function(queixinha, cb){
         												function(err) { 
         													if (err)
         														return cb(err, null);
-															cb(null, null);	
+															cb(null, queixinha);	
 														});
-										cb(null, id);});
+										cb(null, queixinha);});
     				}
     			}); 
         	}
         }
-        cb(null, id);
+        cb(null, queixinha);
     });    
 };
 
 
 access.newUser = function(user, cb){
 	var params = [user.username, user.hash, user.salt, user.email, user.gestor];
-	console.log(user)
     db.ExecuteQuery("INSERT into utilizador(username, hash, salt, email, gestor) values($1, $2, $3, $4, $5)",
         params,
         function(err) { 
         	if (err)
         		return cb(err, null)
 
-        	cb(null, user.utilizador);
+        	cb(null, user);
         });
 };
 
@@ -209,7 +208,7 @@ access.newCategoria = function(designacao, cb){
         function(err, id) { 
         	if (err)
         		cb(err, null);
-        	cb(null, id); 
+        	cb(null, new access.categoria(id, designacao)); 
         }
     );
 };
@@ -224,6 +223,18 @@ access.newCategoriaQueixinha = function(categoria, id, cb){
         	cb(null, id);
         }
     );
+};
+
+access.newComment = function(coment, cb){
+	var params = [coment.idqueixinha, coment.comentario, coment.username];
+	db.ExecuteQuery("INSERT into comentario(id_queixinha, comentario, username) values($1, $2, $3)",
+        params,
+        function(err) { 
+        	if (err)
+        		return cb(err, null)
+
+        	cb(null, coment);
+        });
 };
 
 module.exports = access;

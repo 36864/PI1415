@@ -1,4 +1,5 @@
-var db = require('./dbaccess')
+var db = require('./dbaccess');
+var pass = require('pwd');
 
 function cnuser (req, res, email, g) {
 		var user = new db.user();
@@ -28,49 +29,81 @@ function cnuser (req, res, email, g) {
 		console.log('CRIOU')
 };
 console.log('AcriaR')
-cnuser("Pedro","ped", "a36832@alunos.isel.pt", true);
-cnuser("Miguel","mig", "a36864@alunos.isel.pt", true);
-cnuser("Luz","luz", "a36919@alunos.isel.pt", true);
+cnuser("Pedro2","ped", "a36832@alunos.isel.pt", true);
+cnuser("Miguel2","mig", "a36864@alunos.isel.pt", true);
+cnuser("Luz2","Luz2", "a36919@alunos.isel.pt", true);
 console.log('Criados');
 
-var q = new access.queixinha();
+console.log('Trab PIIIIIIIIIIIIIIIII');
+var q = new db.queixinha();
 q.titulo = "Trab PI";
-q.username = "Pedro";
+q.username = "Pedro2";
 q.fechada = false;
-var idqP;
-access.newQueixinha(q, function(err, id){
-						idqP = id;
+var idqueix;
+db.newQueixinha(q, function(err, id){
+						idqueix = id;
 						console.log(err);
 });
 
-var comment = access.comment();
-comment.idqueixinha = idqP
+console.log(idqueix);
+var comment = db.comment(0, idqueix,  "Not Finished", "Miguel2");
+
+/*comment.idqueixinha = idqP
 comment.comentario = "Not Finished"; 
-comment.username = "Miguel";
+comment.username = "Miguel2";*/
+db.newComment(comment, function(err){
+						console.log(err);
+});
 
+comment = db.comment(0, idqueix, "FDS","Luz2");
+/*comment.idqueixinha = idqueix;
+comment.comentario = "FDS"; 
+comment.username = "Luz2";*/
+db.newComment(comment, function(err){
+						console.log(err);
+});
+
+
+var idcategoria;
+db.newCategoria("PI", function(err, id){
+							idcategoria = id;
+						console.log(err);
+});
+db.newCategoriaQueixinha(idcategoria, idqueix, function(err){
+													console.log(err)
+												});
+console.log('Servidor');
 q.titulo = "Servidor";
-q.username = "Miguel";
+q.username = "Miguel2";
 q.fechada = false;
-access.newQueixinha(q, function(err, id){
+db.newQueixinha(q, function(err, id){
+	idqueix = id;
 						console.log(err);
 });
 
+comment = db.comment(0, idqueix, "FDS", "Luz2");
+db.newComment(comment, function(err){
+						console.log(err);
+});
+
+db.newCategoriaQueixinha(idcategoria, idqueix, function(err){
+													console.log(err)
+												});
+
+console.log('BOOTSTRAP');
 q.titulo = "BOOTSTRAP ?!! N WORK";
-q.username = "Luz";
+q.username = "Luz2";
 q.fechada = false;
-access.newQueixinha(q, function(err){
+db.newQueixinha(q, function(err, id){
+							idqueix = id;
 						console.log(err);
 });
 
-access.comment (id, idqueixinha, comentario, username);
+comment = db.comment(0, idqueix,"FDS", "Miguel2");
+db.newComment(comment, function(err){
+						console.log(err);
+});
 
-access.newUser(user, cb);
-
-access.newQueixinha(queixinha, cb);
-
-
-
-
-access.newCategoria(designacao, cb);
-
-access.newCategoriaQueixinha(categoria, id, cb);
+db.newCategoriaQueixinha(idcategoria, idqueix, function(err){
+													console.log(err)
+												});

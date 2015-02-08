@@ -51,8 +51,8 @@ module.exports = function(app)
                                               failureFlash: true }));
 											  
 	app.get('/register', function (req, res, next) {
-		if(req.user) return res.redirect('/');
-		return res.render('atuh/register');
+		if(req.user.username) return res.redirect('/');
+		return res.render('register');
 	});
 	
 	app.post('/register', function (req, res, next) {

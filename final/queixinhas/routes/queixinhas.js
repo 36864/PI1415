@@ -89,12 +89,14 @@ router.get('/dashboard', function(req, res, next) {
 				if(err.message !== 'RECORD NOT FOUND')
 				return next(err);
 			}
-			queixasbyuser.forEach(function(value){
-				value.isfollowing = true;
-			});
-			interest.forEach(function(value){
-				value.isfollowing = true;
-			});
+			if(queixasbyuser)
+				queixasbyuser.forEach(function(value){
+					value.isfollowing = true;
+				});
+			if(interest)
+				interest.forEach(function(value){
+					value.isfollowing = true;
+				});
 			return res.render('dashboard', {user: req.user, queixasuser:queixasbyuser, queixasinterested:interest});
 		});	
 	});

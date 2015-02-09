@@ -4,10 +4,11 @@ mixin lista(queixas, listtitle)
 	div(style='clear: both; border: 1px solid #CCA300')
 		ul(style='list-style-type: none; padding-left: 0px; margin-right: 0px')
 			if queixas
-				for queixa in queixas
-					li(style='margin-bottom: 10px; border: 1px solid #CCA300')
-						a(href='/queixinhas/#{queixa.id}') #{queixa.titulo}
-						+likes(queixa)
+				for queixa in queixas	
+					if(!queixa.fechada)
+						li(style='margin-bottom: 10px; border: 1px solid #CCA300')
+							a(href='/queixinhas/#{queixa.id}') #{queixa.titulo}
+							+likes(queixa)
 			else
 				li(style='color: gray') não há queixinhas
 				

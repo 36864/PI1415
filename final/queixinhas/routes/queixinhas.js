@@ -136,7 +136,7 @@ router.get('/:id', function(req, res, next) {
 		if(err && err.message !== 'RECORD NOT FOUND') return next(err);
 		db.getQueixinha(req.params.id, function(err, queixa){
 			if(err && err.message !== 'RECORD NOT FOUND') return res.redirect('/queixinhas');
-			if(user)
+			if(user && queixa)
 				db.isfollowing(user.username, queixa.id, function(err){
 					if(!err) queixa.isfollowing = true;
 					else queixa.isfollowing = false;					
@@ -152,7 +152,7 @@ router.get('/:id', function(req, res, next) {
 router.get('/:id/edit', function(req, res, next) {
 	db.getQueixinha(req.params.id, function(err, queixa){
 		if(err) return next(err);	
-		if(queixa.autor !== req.user.username)	return res.redirect('/' + req.params.id);
+		if(queixa.autor !== req.user.username)	return res.redirect('/queixinhas/' + req.params.id);
 		if(err) return next(err);
 		db.getUser(req.user.username, function(err, user){
 			if(err) return next(err);
@@ -166,14 +166,25 @@ router.post('/:id/edit', function(req, res, next) {
 		if(err) return next(err);
 		db.getUser(req.user.username, function(err, user) {
 			if(!user.gestor && queixa.autor !== req.user.username) return res.redirect('back');
-			var queixaEdit = new db.queixinha(null, req.body.title, req.body.desc, req.user, null, null, req.body.geo, null, req.body.categorias, req.body.closed);
+			var queixaEdit = new db.queixinha();
+			queixaEdit = {
+				id:null, 
+				titulo:req.body.title, 
+				descricao:req.body.desc, 
+				autor:req.user, 				
+				fechada: req.body.closed
+				};
+			console.log(queixaEdit);
 			if(queixaEdit.titulo = "") {
 				return res.render('back');
 			}
+			if(queixaEdit.fechada === 'on')
+				queixa.fechada = true;
+			else
+				queixa.fechada = false;
 			queixa.titulo = queixaEdit.titulo;
 			queixa.descricao = queixaEdit.descricao;
-			queixa.categorias = queixaEdit.categorias;
-			queixa.fechada = queixaEdit.fechada;
+			queixa.categorias = queixaEdit.categorias;			
 			
 			if(queixa.descricao === '') {
 				queixa.descricao = null;
@@ -186,7 +197,7 @@ router.post('/:id/edit', function(req, res, next) {
 			db.newComment(comment, function(err){
 				if(err) return next(err);
 			});
-			return res.redirect('back');
+			return res.redirect('/queixinhas');
 		});
 	});
 });

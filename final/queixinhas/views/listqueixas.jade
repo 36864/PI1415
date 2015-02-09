@@ -1,0 +1,14 @@
+mixin lista(queixas)
+	div.container-float(style='height: 30px; weight: 100%; background-color: #CCA300')
+		h5(style='float: right; padding-right: 5px') Queixinhas mais recentes
+	div(style='clear: both')
+		ul(style='list-style-type: none; padding-left: 0px; margin-right: 0px')
+			for queixa in queixas
+				li
+					areatext.col-md-9 #{queixa.titulo}
+					div(style='float: right')
+						form(method='/post')
+							button.btn.minivotebtn(type='button', style='background-color: green', formaction='upvotebtn(#{queixa.id}, #{queixa.voto})') #{queixa.Votos_Corretos}
+							button.btn.minivotebtn(type='button', style='background-color: red', formaction='downvotebtn(#{queixa.id}, #{queixa.voto})') #{queixa.Votos_Incorretos}
+			else
+				li ainda ninguem se queixou

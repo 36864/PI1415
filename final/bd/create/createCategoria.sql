@@ -1,15 +1,14 @@
-﻿-- Table: "Categoria"
+﻿-- Table: categoria
 
--- DROP TABLE "Categoria";
+-- DROP TABLE categoria;
 
-CREATE TABLE "Categoria"
+CREATE TABLE categoria
 (
-  "ID" serial NOT NULL,
   designacao character(20) NOT NULL,
-  CONSTRAINT "pkCategoria" PRIMARY KEY ("ID")
+  CONSTRAINT pkcateg PRIMARY KEY (designacao)
 )
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE "Categoria"
-  OWNER TO postgres;
+ALTER TABLE categoria
+  OWNER TO queixinhauser;

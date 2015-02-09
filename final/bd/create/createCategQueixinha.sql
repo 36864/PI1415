@@ -1,21 +1,21 @@
-﻿-- Table: "CategoriaQueixinha"
+﻿-- Table: categoriaqueixinha
 
--- DROP TABLE "CategoriaQueixinha";
+-- DROP TABLE categoriaqueixinha;
 
-CREATE TABLE "CategoriaQueixinha"
+CREATE TABLE categoriaqueixinha
 (
-  categoria serial NOT NULL,
-  "Queixinha" serial NOT NULL,
-  CONSTRAINT "pkCatQueixinha" PRIMARY KEY (categoria, "Queixinha"),
-  CONSTRAINT "fkCategoria" FOREIGN KEY (categoria)
-      REFERENCES "Categoria" ("ID") MATCH SIMPLE
+  queixinha integer NOT NULL,
+  categoria character(20) NOT NULL,
+  CONSTRAINT pkcatqueix PRIMARY KEY (queixinha, categoria),
+  CONSTRAINT "fkQueixinha" FOREIGN KEY (queixinha)
+      REFERENCES queixinha (id) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION,
-  CONSTRAINT "fkQueixinha" FOREIGN KEY ("Queixinha")
-      REFERENCES "Queixinha" ("ID") MATCH SIMPLE
+  CONSTRAINT fkcat FOREIGN KEY (categoria)
+      REFERENCES categoria (designacao) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
 )
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE "CategoriaQueixinha"
-  OWNER TO postgres;
+ALTER TABLE categoriaqueixinha
+  OWNER TO queixinhauser;

@@ -24,10 +24,10 @@ block content
 									div.col-md-6
 										form(action='/queixinhas/#{queixa.id}/unsubscribe', method='post')
 											button.btn.btn-default Cancelar
-								if user.gestor
+								if user.gestor || user.username === queixa.autor
 									div.col-md-6
-										form(action='/queixinhas/#{queixa.id}/edit', method='post')
-											button.btn.btn-default.inline Fechar
+										form(action='/queixinhas/#{queixa.id}/edit', method='get')
+											button.btn.btn-default.inline Editar
 							div.col-md-6
 								+likes(queixa)
 			div.col-md-1

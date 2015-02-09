@@ -129,7 +129,7 @@ access.getQueixinhasUtilizador = function (username, cb){
 		}, cb);
 };
 
-access.isfollowing = function(uername, id, cb){
+access.isfollowing = function(username, id, cb){
 	db.SelectOne("SELECT username, queixinha FROM queixinhautilizador WHERE username=$1 AND queixinha=$2",
 	[username, id],
 	function(row){

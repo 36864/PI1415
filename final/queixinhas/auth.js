@@ -2,6 +2,9 @@ var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
 var db = require('./dbaccess');
 var pass = require('pwd');
+var mailer = require('nodemailer');
+var mailInfo = require('./config').getEmailInfo();
+var crypto = require('crypto');
 
 passport.use(new LocalStrategy(function(username, password, done){
     db.getUser(username, function(err, user) {
@@ -31,18 +34,12 @@ passport.deserializeUser(function(username, done) {
   });
 });
 
-
 module.exports = function(app)
 {
     app.use(function(req, res, next) {
       req.user = req.user || new db.user();
       console.log('USER ' + req.user);
       next();
-    });
-
-
-    app.get('/login', function (req, res, next) {
-        return res.render('login');
     });
 
     app.post('/login', passport.authenticate('local', { successRedirect: '/queixinhas/dashboard',
@@ -69,7 +66,7 @@ module.exports = function(app)
 			user.email = req.body.email;
 			user.gestor = false;
 			console.log(user);
-			db.newUser(user, function(err, user) {
+			db.newUser(user, function(err) {
 				if(err) return next(err);
 				req.login(user, function(err){
 					console.log(err);
@@ -81,26 +78,54 @@ module.exports = function(app)
 		
 	});
 
+
 	app.get('/recover', function(req, res, next) {
 		if(req.user.username) return res.redirect('/');
-		return res.render('recover', {user: req.user});
+		return res.render('recover');
 	});
 	
 	app.post('/recover', function(req, res, next) {
 		if(req.user.username) return res.redirect('/');
-		if(req.body.email === ''){
-			return res.render('recover', {error: 'email cannot be null', user: req.user});
+		if(req.body.email === '' || req.body.username === ''){
+			return res.render('recover', {error: 'email and username cannot be null'});
 		}
-		
+		db.getUserbyEmail(req.body.email, function(err, user){
+			if(err) return res.render('recover', {erro: 'Utilizador our Email invalido'});
+			var password = crypto.randomBytes(8);
+			pass.hash(password, function(err, salt, hash){
+				if(err) return next(err);
+				user.salt = salt;
+				user.hash = hash;
+				db.updatepass(user, function(err){
+					var transporter = mailer.createTransport(mailInfo);
+					var mailOptions = {
+						from: mailInfo.auth.user, // sender address
+						to: req.body.email, // list of receivers
+						subject: 'Queixinhas na Net: Nova Password', // Subject line
+						text: 'A sua nova password é: ' + password // plaintext body
+					};
+					// send mail with defined transport object
+					transporter.sendMail(mailOptions, function(error, info){
+						if(error){
+							console.log(error);
+							return res.render('recover', {err: error.message});
+						}else{
+							console.log('Message sent: ' + info.response);
+						}
+						return res.render('recover', {completed:true, email:req.body.email});
+					});
+				});
+			});
+		});
 	});
 
     app.get('/logout', function(req, res, next) {
       req.logout();
-      res.redirect('/');
+      return res.redirect('/');
     });
 	
 	app.post('/logout', function(req, res, next) {
       req.logout();
-      res.redirect('/');
+      return res.redirect('/');
     });
 }

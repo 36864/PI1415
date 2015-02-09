@@ -22,8 +22,7 @@ router.get('/', function(req, res, next) {
 		if(req.user.username)
 			page = req.query.page;
 	}
-	console.log('SERVING LIST PAGE ' + page);
-	db.getQueixinhas(page, function(err, list){		
+	db.getQueixinhas(page, function(err, queixas){		
 		if(err) {
 			if(err.message !== 'RECORD NOT FOUND')
 				return next(err);
@@ -35,7 +34,19 @@ router.get('/', function(req, res, next) {
 			}
 			db.getCountQueixinhas(function(err, count) {
 				count = Math.ceil(count/10);
-				return res.render('queixinhas', {queixas: list, user:req.user, page:page, total:count});
+				if(count > 0 && user.username){
+					db.getvotobyuser(user.username, function(err, votos){
+						queixas.forEach(function(value){
+							var voto = votos.find(function(voto){
+										return this.id===voto.queixinha;								
+										}, value);
+							if(voto) queixas.voto = voto;
+							else queixas.voto = 0;
+						});
+						return res.render('queixinhas', {queixas: queixas, user:req.user, page:page, total:count});
+					});
+				}
+				return res.render('queixinhas', {queixas: queixas, user:req.user, page:page, total:count});
 			});
 		});
 	});
@@ -78,8 +89,10 @@ router.post('/new', function(req, res, next) {
 		res.flash('Título não pode ser vazio');
 		return res.render('novaqueixinha', {user: user, queixa: queixa});
 	}
+	console.log(queixa);
 	db.newQueixinha(queixa, function(err, queixa) {
 			if(err) return next(err);
+			console.log(queixa);		
 			return res.redirect('/queixinhas/' + queixa.id);
 	});
 });
@@ -138,7 +151,7 @@ router.post('/:id:/downvote', function(req,res,next){
 				console.log(err);
 				return next(err);
 			}	
-			db.downvote(queixa.id, user.username, function(err){ 
+			db.newvoto(user.username, queixa.id, false, function(err){ 
 				return res.render('queixinha', { user: user, queixa: queixa, voted: user.voted});
 			});
 		});
@@ -156,7 +169,7 @@ router.post('/:id/upvote', function(req, res, next) {
 				console.log(err);
 				return next(err);
 			}	
-			db.upvote(queixa.id, user.username, function(err){ 
+			db.newvoto(user.username, queixa.id, true, function(err){ 
 				return res.render('queixinha', { user: user, queixa: queixa, voted: user.voted});
 			});
 		});

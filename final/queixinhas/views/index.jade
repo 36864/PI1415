@@ -3,22 +3,23 @@ extends layout
 block content
 	div.container-float
 		div.row(style='margin-top: 100px')
-			div.col-md-6
+			div.col-md-5
 				h3(style='background-color: lightgreen; padding: 5px') O que é o Queixinhas Na Net?
 				p nao sei o que é mas gosto muito
 				h3(style='margin-top: 80px; background-color: lightgreen; padding: 5px') Como funcionar com o Queixinhas Na Net
 				p fazes uma coisinhas, clicas nuns botões, e já está
 			div.col-md-2
-				p blank
-			div.col-md-3
-				div(style='height: 30px; weight: 100%; background-color: #CCA300')
+			div.col-md-4(style='border: 1px solid #CCA300')
+				div.container-float(style='height: 30px; weight: 100%; background-color: #CCA300')
 					h5(style='float: right; padding-right: 5px') Queixinhas mais recentes
 				div(style='clear: both')
 					ul(style='list-style-type: none; padding-left: 0px; margin-right: 0px')
 						for queixa in queixas
 							li
 								areatext.col-md-9 #{queixa.titulo}
-								// ver com o mike o abuso de "likes" e "dislikes"
+								div(style='float: right')
+									button.btn.minivotebtn(type='button', style='background-color: green') #{queixa.Votos_Corretos}
+									button.btn.minivotebtn(type='button', style='background-color: red') #{queixa.Votos_Incorretos}
 						else
 							li ainda ninguem se queixou
 					

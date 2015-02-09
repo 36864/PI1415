@@ -33,7 +33,10 @@ router.get('/', function(req, res, next) {
 				if(err.message !== 'RECORD NOT FOUND')
 					return next(err);
 			}
-			return res.render('queixinhas', {list: list, user: req.user, page: page});
+			db.getCountQueixinhas(function(err, count) {
+				count = Math.ceil(count/10);
+				return res.render('queixinhas', {queixas: list, user:req.user, page:page, total:count});
+			});
 		});
 	});
 
@@ -124,20 +127,59 @@ router.post('/:id/edit', function(req, res, next) {
 	});
 });
 
-router.post('/:id/vote', function(req, res, next) {
+router.post('/:id:/downvote', function(req,res,next){
 	db.getUser(req.user.username, function(err, user){
 		if(err){
 			console.log(err);
 			return next(err);
 		}
 		db.getQueixinha(req.params.id, function(err, queixa){
+			if(err){
+				console.log(err);
+				return next(err);
+			}	
+			db.downvote(queixa.id, user.username, function(err){ 
+				return res.render('queixinha', { user: user, queixa: queixa, voted: user.voted});
+			});
+		});
+	});
+});
+
+router.post('/:id/upvote', function(req, res, next) {
+	db.getUser(req.user.username, function(err, user){
 		if(err){
 			console.log(err);
 			return next(err);
-		}	
-		res.writeHead(200, {'Content-Type':'text/html' });
-		return res.render('queixinha', { user: user, queixa: queixa, voted: user.voted});
+		}
+		db.getQueixinha(req.params.id, function(err, queixa){
+			if(err){
+				console.log(err);
+				return next(err);
+			}	
+			db.upvote(queixa.id, user.username, function(err){ 
+				return res.render('queixinha', { user: user, queixa: queixa, voted: user.voted});
+			});
 		});
+	});
+});
+
+router.post('/:id/subscribe', function(req, res, next) {
+	
+});
+
+router.post('/:id/unsubscribe', function(req, res, next) {
+	
+});
+
+router.post('/:id/comment', function(req, res, next) {
+	db.getUser(req.user.username, function(err, user) {
+		if(err){
+			return next(err);
+		}
+		if(req.body.comment === '') {
+			return res.render('/:id/', {user: user, error:'Comentário não pode ser vazio'});
+		}
+		
 	});
 });
 

@@ -1,18 +1,18 @@
-﻿-- Table: "Queixinha"
+﻿-- Table: queixinha
 
--- DROP TABLE "Queixinha";
+-- DROP TABLE queixinha;
 
-CREATE TABLE "Queixinha"
+CREATE TABLE queixinha
 (
   titulo character(140) NOT NULL,
   descricao character(140),
-  username character(20),
-  "Votos_Corretos" integer,
-  "Votos_incorretos" integer,
-  "ID" serial NOT NULL,
-  "Geo_referencia" character(20),
-  "Fechada" boolean NOT NULL,
-  CONSTRAINT "pkQueixinha" PRIMARY KEY ("ID"),
+  username character(50) NOT NULL,
+  votos_corretos integer,
+  votos_incorretos integer,
+  id integer NOT NULL DEFAULT nextval('"Queixinha_ID_seq"'::regclass),
+  geo_referencia character(20),
+  fechada boolean NOT NULL,
+  CONSTRAINT "pkQueixinha" PRIMARY KEY (id),
   CONSTRAINT username FOREIGN KEY (username)
       REFERENCES utilizador (username) MATCH SIMPLE
       ON UPDATE NO ACTION ON DELETE NO ACTION
@@ -20,5 +20,5 @@ CREATE TABLE "Queixinha"
 WITH (
   OIDS=FALSE
 );
-ALTER TABLE "Queixinha"
-  OWNER TO postgres;
+ALTER TABLE queixinha
+  OWNER TO queixinhauser;

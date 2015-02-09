@@ -41,9 +41,6 @@ app.use(function(req, res, next) {
 });
 
 auth(app);
-
-
-console.log('JA N HA MAIS')
 var route_idx = require('./routes/index');
 var route_queixinhas = require('./routes/queixinhas');
 app.use('/', route_idx);

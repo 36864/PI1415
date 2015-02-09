@@ -127,7 +127,16 @@ access.getQueixinhasUtilizador = function (username, cb){
 				}, cb);
 			return queix;
 		}, cb);
-}
+};
+
+access.isfollowing = function(uername, id, cb){
+	db.SelectOne("SELECT username, queixinha FROM queixinhautilizador WHERE username=$1 AND queixinha=$2",
+	[username, id],
+	function(row){
+		return {username: row.username, queixa: row.queixinha};
+	},
+	cb);		
+};
 
 access.getQueixinhasbyIntUser = function (username, cb){
 	db.SelectSome("SELECT id, titulo, descricao,username, votos_incorretos,votos_corretos, geo_referencia, fechada from queixinha inner join categoriaqueixinha on (id = queixinha) where username = $1", 
@@ -157,6 +166,8 @@ access.getCategoria = function(designacao, cb){
 			return row.id;
 		}, cb);
 };
+
+
 
 //funcoes pa criar objects na BD. Chamar callback com o objecto criado
 //recebe objecto incompleto (sem campos gerados, sem comentarios, sem ID)

@@ -83,7 +83,7 @@ router.get('/dashboard', function(req, res, next) {
 			}
 			console.log(queixasbyuser)
 			console.log(interest);
-			return res.render('dashboard', {user: req.user, queixasUser : queixasbyuser, queixasInterested:interest});
+			return res.render('dashboard', {user: req.user, queixasuser:queixasbyuser, queixasinterested:interest});
 		});	
 	});
 });
@@ -119,7 +119,11 @@ router.get('/:id', function(req, res, next) {
 		if(err && err.message !== 'RECORD NOT FOUND') return next(err);
 		db.getQueixinha(req.params.id, function(err, queixa){
 			if(err && err.message !== 'RECORD NOT FOUND') return res.redirect('/queixinhas');
-			return res.render('queixinha', {queixinha: queixa, user: user});
+			db.isfollowing(user.username, queixa.id, function(err){
+				if(!err) queixa.isfollowing = true;
+				else queixa.isfollowing = false;					
+				return res.render('queixinha', {queixa: queixa, user: user});
+			});
 		});
 	});
 });
@@ -132,7 +136,7 @@ router.get('/:id/edit', function(req, res, next) {
 		if(err) return next(err);
 		db.getUser(req.user.username, function(err, user){
 			if(err) return next(err);
-			return res.render('/edit', {queixinha:queixa, user:user});
+			return res.render('/edit', {queixa:queixa, user:user});
 		});
 	});
 });

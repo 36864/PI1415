@@ -153,7 +153,7 @@ router.get('/:id/edit', function(req, res, next) {
 		if(err) return next(err);
 		db.getUser(req.user.username, function(err, user){
 			if(err) return next(err);
-			return res.render('/edit', {queixa:queixa, user:user});
+			return res.render('edit', {queixa:queixa, user:user});
 		});
 	});
 });
@@ -249,10 +249,9 @@ router.post('/:id/subscribe', function(req, res, next) {
 		if(err) return next(err);
 		db.getQueixinha(req.params.id, function(err, queixa){
 			if(err) return next(err);
-			db.deleteQueixinhaUtilizador(user.username, req.params.id, function(err){
+			db.newQueixinhaUtilizador(user.username, req.params.id, function(err){
 				if(err) return next(err);
 				return res.redirect('back');
-			});
 		});
 	});
 });
@@ -262,9 +261,10 @@ router.post('/:id/unsubscribe', function(req, res, next) {
 		if(err) return next(err);
 		db.getQueixinha(req.params.id, function(err, queixa){
 			if(err) return next(err);
-			db.newQueixinhaUtilizador(user.username, req.params.id, function(err){
+			db.deleteQueixinhaUtilizador(user.username, req.params.id, function(err){
 				if(err) return next(err);
 				return res.redirect('back');
+			});
 			});
 		});
 	});
@@ -290,4 +290,3 @@ router.post('/:id/comment', function(req, res, next) {
 });
 
 module.exports = router;
-

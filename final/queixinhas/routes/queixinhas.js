@@ -140,7 +140,7 @@ router.get('/:id', function(req, res, next) {
 				return res.render('queixinha', {queixa: queixa, user: user});
 				});
 			else
-				return res.sender('queixinha', {queixa:queixa, user:user});
+				return res.render('queixinha', {queixa:queixa, user:user});
 		});
 	});
 });

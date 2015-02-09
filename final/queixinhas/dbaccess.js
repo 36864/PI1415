@@ -227,6 +227,13 @@ access.newCategoriaQueixinha = function(categoria, id, cb){
         cb);
 };
 
+access.newvoto = function(username, queixinha,voto, cb){
+	var params = [username, queixinha, voto];
+    db.ExecuteQuery("INSERT into votacao(username, id_queixinha,correta) values($1, $2,$3)",
+        params,
+        cb);
+};
+
 access.newQueixinhaUtilizador = function(username, idqueix, cb){
 	var params = [username, idqueix];
     db.ExecuteQuery("INSERT into queixinhatilizador(username, queixinha) values($1, $2)",

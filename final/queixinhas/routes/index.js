@@ -30,20 +30,28 @@ router.get('/', function(req, res, next) {
 							if(err.message !== 'RECORD NOT FOUND')
 								return next(err);
 						}
-						queixas.forEach(function(value){
-							if(!votos) {
-								value.voto = 0;								
-							}
-							else{
-								var voto = votos.find(function(voto){
-									return this.id===voto.queixinha;								
-								}, value);
-								console.log(voto);
-								if(voto) value.voto = voto;
-								else value.voto = 0;
-							}
-						});
-						console.log(queixas);
+						db.getQueixinhasbyIntUser(user.username, function(err, interested){
+							if(err) {
+								if(err.message !== 'RECORD NOT FOUND')
+									return next(err);
+							}						
+							queixas.forEach(function(queixa){
+								queixa.voto = 0;
+								queixa.isfollowing = false;
+								if(votos != null) {
+									 votos.forEach(function(voto){										
+										if(queixa.id === voto.queixinha)
+											queixa.voto = voto.voto;
+									});
+								}
+								if (interested !== null){
+									interested.forEach(function(following){
+										if(following.id === queixa.id)
+											queixa.isfollowing = true;
+									});
+								}
+							});
+							});
 						return res.render('index', {queixas: queixas, user:req.user});
 					});
 				}

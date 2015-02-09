@@ -1,4 +1,4 @@
-extends layout
+﻿extends layout
 
 block content
 	div.container
@@ -8,9 +8,11 @@ block content
 				div.panel-body
 					form(action='/queixinhas/new', method='post')
 						div(style='margin-bottom: 30px; height 150%')
-							textarea.form-control(type='text', placeholder='T�tulo', name='title', style='resize: none')
+							textarea.form-control(type='text', placeholder='Título', name='title', style='resize: none', required)
 						div(style='margin-bottom: 30px')
-							textarea.form-control(type='text', placeholder='Descri��o (Opcional)', name='desc', style='resize: none')
+							textarea.form-control(type='text', placeholder='Descrição(Opcional)', name='desc', style='resize: none')
 						div(style='margin-bottom: 30px')
 							textarea.form-control(type='text', placeholder='Categorias', name='categoria', style='resize: none')
+						div(style='margin-bottom: 30px')
+							textarea.form-control(type='text', placeholder='Localização', name='Localização', style='resize: none')
 						button(class='btn btn-success', type='submit') Submeter

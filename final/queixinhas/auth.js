@@ -42,7 +42,7 @@ module.exports = function(app)
       next();
     });
 
-    app.post('/login', passport.authenticate('local', { successRedirect: '/queixinhas/dashboard',
+    app.post('/login', passport.authenticate('local', { successRedirect: 'back',
                                               failureRedirect: '/',
                                               failureFlash: true }));
 											  

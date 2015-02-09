@@ -47,7 +47,7 @@ access.votacao = function votacao(queixinha, voto)
 access.getQueixinhas = function (page, cb){
 	//return lista de queixinhas, pagina page
 	var offset = (page-1) * 10;
-	db.SelectAll("SELECT id, titulo, descricao, votos_corretos, votos_incorretos, username, geo_referencia, fechada from queixinha LIMIT 10 OFFSET "+offset , 
+	db.SelectAll("SELECT id, titulo, descricao, votos_corretos, votos_incorretos, username, geo_referencia, fechada FROM queixinha ORDER BY id DESC LIMIT 10 OFFSET "+offset , 
 		function (row) {
 			return new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.votos_corretos, row.votos_incorretos,row.geo_referencia, row.fechada);
 		}, cb);
@@ -129,7 +129,7 @@ access.getQueixinhasUtilizador = function (username, cb){
 		}, cb);
 };
 
-access.isfollowing = function(uername, id, cb){
+access.isfollowing = function(username, id, cb){
 	db.SelectOne("SELECT username, queixinha FROM queixinhautilizador WHERE username=$1 AND queixinha=$2",
 	[username, id],
 	function(row){
@@ -139,7 +139,7 @@ access.isfollowing = function(uername, id, cb){
 };
 
 access.getQueixinhasbyIntUser = function (username, cb){
-	db.SelectSome("SELECT id, titulo, descricao,username, votos_incorretos,votos_corretos, geo_referencia, fechada from queixinha inner join categoriaqueixinha on (id = queixinha) where username = $1", 
+	db.SelectSome("SELECT id, titulo, descricao, queixinha.username, votos_incorretos,votos_corretos, geo_referencia, fechada from queixinha inner join queixinhautilizador on (id = queixinha) where queixinha.username = $1", 
 		[username],
 		function (row) {
 			var queix = new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.votos_corretos,row.votos_incorretos,row.geo_referencia, row.fechada);

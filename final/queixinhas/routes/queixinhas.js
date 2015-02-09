@@ -40,23 +40,31 @@ router.get('/', function(req, res, next) {
 				console.log(count);
 				if(count > 0 && req.user.username){
 					db.getvotobyuser(user.username, function(err, votos){
+						if(err) {
+							if(err.message !== 'RECORD NOT FOUND')
+								return next(err);
+						}
+						db.getQueixinhasbyIntUser(user.username, function(err, interested){
 							if(err) {
 								if(err.message !== 'RECORD NOT FOUND')
 									return next(err);
-							}
-							queixas.forEach(function(value){
-								if(!votos) {
-									value.voto = 0;								
+							}						
+							queixas.forEach(function(queixa){
+								queixa.voto = 0;
+								queixa.isfollowing = false;
+								if(votos) {
+									 votos.forEach(function(voto){										
+										if(queixa.id === voto.queixinha)
+											queixa.voto = voto.voto;
+									});
 								}
-								else{
-									console.log(votos);
-									var voto = votos.find(function(voto){
-										return this.id===voto.queixinha;								
-									}, value);
-									console.log(voto);
-									if(voto) value.voto = voto;
-									else value.voto = 0;
+								if (interested){
+									interested.forEach(function(following){
+										if(following.id === queixa.id)
+											queixa.isfollowing = true;
+									});
 								}
+							});
 							});
 						return res.render('queixinhas', {queixas: queixas, user:req.user, page:page, total:count});
 					});
@@ -81,8 +89,14 @@ router.get('/dashboard', function(req, res, next) {
 				if(err.message !== 'RECORD NOT FOUND')
 				return next(err);
 			}
-			console.log(queixasbyuser)
-			console.log(interest);
+			if(queixasbyuser)
+				queixasbyuser.forEach(function(value){
+					value.isfollowing = true;
+				});
+			if(interest)
+				interest.forEach(function(value){
+					value.isfollowing = true;
+				});
 			return res.render('dashboard', {user: req.user, queixasuser:queixasbyuser, queixasinterested:interest});
 		});	
 	});
@@ -105,6 +119,9 @@ router.post('/new', function(req, res, next) {
 	if(queixa.titulo === '') {
 		return res.redirect('back');
 	}
+	if(queixa.descricao === '') {
+		queixa.descricao = null;
+	}
 	console.log(queixa);
 	db.newQueixinha(queixa, function(err, queixa) {
 			if(err) return next(err);
@@ -119,11 +136,14 @@ router.get('/:id', function(req, res, next) {
 		if(err && err.message !== 'RECORD NOT FOUND') return next(err);
 		db.getQueixinha(req.params.id, function(err, queixa){
 			if(err && err.message !== 'RECORD NOT FOUND') return res.redirect('/queixinhas');
-			db.isfollowing(user.username, queixa.id, function(err){
-				if(!err) queixa.isfollowing = true;
-				else queixa.isfollowing = false;					
+			if(user)
+				db.isfollowing(user.username, queixa.id, function(err){
+					if(!err) queixa.isfollowing = true;
+					else queixa.isfollowing = false;					
 				return res.render('queixinha', {queixa: queixa, user: user});
-			});
+				});
+			else
+				return res.render('queixinha', {queixa:queixa, user:user});
 		});
 	});
 });
@@ -136,7 +156,7 @@ router.get('/:id/edit', function(req, res, next) {
 		if(err) return next(err);
 		db.getUser(req.user.username, function(err, user){
 			if(err) return next(err);
-			return res.render('/edit', {queixa:queixa, user:user});
+			return res.render('edit', {queixa:queixa, user:user});
 		});
 	});
 });
@@ -154,11 +174,14 @@ router.post('/:id/edit', function(req, res, next) {
 			queixa.descricao = queixaEdit.descricao;
 			queixa.categorias = queixaEdit.categorias;
 			queixa.fechada = queixaEdit.fechada;
-			db.editQueixinha(queixa, user, function(err){
+			
+			if(queixa.descricao === '') {
+				queixa.descricao = null;
+			}
+			db.updatequeixinha(queixa, function(err){
 				if(err) return next(err);
 			});
 			var commenttext = 'Esta queixinha foi editada por '+user.username;
-			if(req.body.comment.length) commenttext += ': ' + req.body.comment;
 			var comment = {idqueixinha: queixa.id, comentario:commenttext, username:user.username};
 			db.newComment(comment, function(err){
 				if(err) return next(err);
@@ -232,10 +255,9 @@ router.post('/:id/subscribe', function(req, res, next) {
 		if(err) return next(err);
 		db.getQueixinha(req.params.id, function(err, queixa){
 			if(err) return next(err);
-			db.deleteQueixinhaUtilizador(user.username, req.params.id, function(err){
+			db.newQueixinhaUtilizador(user.username, req.params.id, function(err){
 				if(err) return next(err);
 				return res.redirect('back');
-			});
 		});
 	});
 });
@@ -245,9 +267,10 @@ router.post('/:id/unsubscribe', function(req, res, next) {
 		if(err) return next(err);
 		db.getQueixinha(req.params.id, function(err, queixa){
 			if(err) return next(err);
-			db.newQueixinhaUtilizador(user.username, req.params.id, function(err){
+			db.deleteQueixinhaUtilizador(user.username, req.params.id, function(err){
 				if(err) return next(err);
 				return res.redirect('back');
+			});
 			});
 		});
 	});
@@ -267,10 +290,9 @@ router.post('/:id/comment', function(req, res, next) {
 			db.newComment(comment, function(err){
 				if(err) return next(err);
 			});
-			
+			return res.redirect('back');
 		});
 	});
 });
 
 module.exports = router;
-

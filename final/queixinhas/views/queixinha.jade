@@ -17,27 +17,31 @@ block content
 						if user && user.username
 							div.col-md-6
 								if !queixa.isfollowing
-									form(action='/queixinhas/#{queixa.id}/subscribe', method='post')
-										button.btn.btn-default Subscrever
+									div.col-md-6
+										form(action='/queixinhas/#{queixa.id}/subscribe', method='post')
+											button.btn.btn-default Subscrever
 								else
-									form(action='/queixinhas/#{queixa.id}/unsubscribe', method='post')
-										button.btn.btn-default Cancelar
+									div.col-md-6
+										form(action='/queixinhas/#{queixa.id}/unsubscribe', method='post')
+											button.btn.btn-default Cancelar
+								if user.gestor
+									div.col-md-6
+										form(action='/queixinhas/#{queixa.id}/edit', method='post')
+											button.btn.btn-default.inline Fechar
 							div.col-md-6
 								+likes(queixa)
 			div.col-md-1
 			div.col-md-5
 				div.row
 					ul(style='list-style-type: none')
-						li
+						li.row
 							for cm in queixa.comnt
 								div.col-md-3
 									p #{cm.username}
 								div.col-md-9
 									p #{cm.comentario}
-						li
+						li.row
 							form(action='/queixinhas/#{queixa.id}/comment', method='post')
 								textarea.form-control(type='text', placeholder='Comentário', name='comment', style='resize: none', required)
+								button.btn.btn-default.mybutton(style='float: right') Comentar
 						li
-							button.btn.btn-default.mybutton(style='float: right') Comentar
-			
-//queixa{.comnt}, user

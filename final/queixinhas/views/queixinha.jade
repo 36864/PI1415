@@ -1,15 +1,24 @@
 extends layout
+include ./utils.jade
 
 block content
 	div.container-float
 		div.row(style='margin-top: 100px')
 			div.col-md-5
-				div.container-fluid
+				div.row
 					h3 Titulo
-					areatext.row(style='clear: both') #{queixa.titulo}
+					p(style='clear: both') #{queixa.titulo}
 					h4 Descrição
-					areatext.row(style='clear: both') #{queixa.descricao}
-					
+					p(style='clear: both') #{queixa.descricao}
+					nav.navbar
+						if user && user.username
+							if !queixa.isfollowing
+								form(action='/queixinhas/#{queixa.id}/subscribe', method='post')
+									button.btn.btn-default Subscrever
+							else
+								form(action='/queixinhas/#{queixa.id}/unsubscribe', method='post')
+									button.btn.btn-default Cancelar
+							+likes(queixa)
 			div.col-md-1
 			div.col-md-5
 			

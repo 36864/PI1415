@@ -1,11 +1,11 @@
 extends layout
-include ./listqueixas.jade
+include ./utils.jade
 
 block content
 	div.container-float
 		div.row(style='margin-top: 100px')
 			div.col-md-5(style='left:25%')
-				+lista(queixas)
+				+lista(queixas, 'Todas as Queixinhas')
 				div(style='float: right')
 					if total > 1
 						ul.pagination

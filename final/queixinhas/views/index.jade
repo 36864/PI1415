@@ -1,4 +1,5 @@
 extends layout
+include ./utils.jade
 
 block content
 	div.container-float
@@ -10,16 +11,4 @@ block content
 				p fazes uma coisinhas, clicas nuns botões, e já está
 			div.col-md-2
 			div.col-md-4(style='border: 1px solid #CCA300')
-				div.container-float(style='height: 30px; weight: 100%; background-color: #CCA300')
-					h5(style='float: right; padding-right: 5px') Queixinhas mais recentes
-				div(style='clear: both')
-					ul(style='list-style-type: none; padding-left: 0px; margin-right: 0px')
-						for queixa in queixas
-							li
-								areatext.col-md-9 #{queixa.titulo}
-								div(style='float: right')
-									form(name='voteform', method='/post')
-										button.btn.minivotebtn(type='button', style='background-color: green', onclick='upvotebtn(#{queixa.id}, #{queixa.voto})') #{queixa.Votos_Corretos}
-										button.btn.minivotebtn(type='button', style='background-color: red', onclick='downvotebtn(#{queixa.id}, #{queixa.voto})') #{queixa.Votos_Incorretos}
-						else
-							li ainda ninguem se queixou
+				+lista(queixas, 'Queixinhas mais recentes')

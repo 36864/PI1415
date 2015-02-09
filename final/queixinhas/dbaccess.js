@@ -38,6 +38,12 @@ access.categoria = function categoria(designacao)
 	this.designacao = designacao;
 }
 
+access.votacao = function votacao(queixinha, voto)
+{
+	this.queixinha = queixinha;
+	this.voto = this.voto;
+}
+
 access.getQueixinhas = function (page, cb){
 	//return lista de queixinhas, pagina page
 	var offset = (page-1) * 10;
@@ -101,15 +107,21 @@ access.getComentQueixinha = function (id, cb){
 		}, cb);	
 };
 
-access.getQueixinhasUtilizador =function (username, cb){
+access.getvotobyuser = function (username, cb){
+	db.SelectSome("SELECT id_queixinha, correta from votacao where username = $1", 
+		[username],
+		function (row) {
+			return new access.votacao(row.id_queixinha, row.correta);
+		}, cb);	
+};
+
+access.getQueixinhasUtilizador = function (username, cb){
 	db.SelectSome("SELECT id, titulo, descricao,username, votos_incorretos,votos_corretos, geo_referencia, fechada from queixinha where username = $1", 
 		[username],
 		function (row) {
-			//var categorias =[];
 			var queix = new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.votos_corretos,row.votos_incorretos,row.geo_referencia, row.fechada);
 			access.getCategoriaQueixinha(row.id,function(err, catgs){
-					if(!err){
-						//categorias = c;					
+					if(!err){					
 						queix.categorias = catgs;
 					}
 				}, cb);

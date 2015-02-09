@@ -69,11 +69,27 @@ access.getQueixinha = function (id, cb) {
 };
 
 access.getUser = function (name, cb){
-	//return user
 	db.SelectOne("SELECT username, hash, salt, email, gestor from utilizador where username = $1",
 		[name], 
 		function (row) {
 			return new access.user(row.username, row.hash, row.salt, row.email, row.gestor );
+		},cb);	
+};
+
+access.getUserbyEmail = function (email, cb){
+	//return user
+	db.SelectOne("SELECT username, hash, salt, email, gestor from utilizador where email = $1",
+		[email], 
+		function (row) {
+			return new access.user(row.username, row.hash, row.salt, row.email, row.gestor );
+		},cb);	
+};
+
+access.getCountQueixinhas = function (cb){
+	db.SelectOne("SELECT count (id) as count from queixinha",
+		[], 
+		function (row) {
+			return row.count;
 		}, cb);	
 };
 

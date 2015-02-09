@@ -29,16 +29,16 @@ function cnuser (req, res, email, g) {
 		console.log('CRIOU')
 };
 console.log('AcriaR')
-cnuser("Pedro2","ped", "a36832@alunos.isel.pt", true);
+/*cnuser("Pedro2","ped", "a36832@alunos.isel.pt", true);
 cnuser("Miguel2","mig", "a36864@alunos.isel.pt", true);
-cnuser("Luz2","Luz2", "a36919@alunos.isel.pt", true);
-console.log('Criados');
+cnuser("Luz2","Luz2", "a36919@alunos.isel.pt", true);*/
 
-console.log('Trab PIIIIIIIIIIIIIIIII');
+//console.log('Trab PIIIIIIIIIIIIIIIII');
 var q = new db.queixinha();
 q.titulo = "Trab PI";
-q.username = "Pedro2";
+q.autor = "Pedro2";
 q.fechada = false;
+console.log(q)
 
 var idqueix;
 var idcategoria;
@@ -46,14 +46,16 @@ var comment;
 
 db.newQueixinha(q, function(err, id){
 						idqueix = id;
+						console.log("IDDDQQQQQ"+idqueix)
 						console.log(err);
 
-	console.log(idqueix);
+	
 	comment = new db.comment(0, idqueix,  "Not Finished", "Miguel2");
-
+console.log("CMT"+comment.toString());
 	db.newComment(comment, function(err){
 						console.log(err);
 	comment = new db.comment(0, idqueix, "FDS","Luz2");
+	console.log("CMT"+comment.toString());
 	db.newComment(comment, function(err){
 						console.log(err);
 
@@ -69,16 +71,18 @@ db.newQueixinha(q, function(err, id){
 });
 });
 
-console.log('Servidor');
+//console.log('Servidor');
 q.titulo = "Servidor";
-q.username = "Miguel2";
+q.autor = "Miguel2";
 q.fechada = false;
+console.log(q)
 
 db.newQueixinha(q, function(err, id){
 	idqueix = id;
 	console.log(err);
 
 	comment = new db.comment(0, idqueix, "FDS", "Luz2");
+	console.log("CMT"+comment.toString());
 	db.newComment(comment, function(err){
 						console.log(err);
 	});
@@ -88,15 +92,17 @@ db.newQueixinha(q, function(err, id){
 												});
 });
 
-console.log('BOOTSTRAP');
+//console.log('BOOTSTRAP');
 q.titulo = "BOOTSTRAP ?!! N WORK";
-q.username = "Luz2";
+q.autor = "Luz2";
 q.fechada = false;
+console.log(q);
 db.newQueixinha(q, function(err, id){
 					idqueix = id;
 					console.log(err);
 
 		comment = new db.comment(0, idqueix,"FDS", "Miguel2");
+		console.log("CMT"+comment.toString());
 		db.newComment(comment, function(err){
 								console.log(err);
 		});

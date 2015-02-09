@@ -80,6 +80,7 @@ function dbExecuteQuery(query, queryParams, cb) {
                 return cb( err);
             if(result.rowCount != 1) 
                 return cb(new Error("Cannot executeQuery"), null);
+            console.log("asdfghjklçasdfghjklçºasdfghjklçºsdghjklçº")
             console.log(result)
             cb(null, result.rows[0].id);
         });

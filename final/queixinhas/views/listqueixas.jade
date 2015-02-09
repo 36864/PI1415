@@ -5,9 +5,10 @@ mixin lista(queixas)
 		ul(style='list-style-type: none; padding-left: 0px; margin-right: 0px')
 			if queixas
 				for queixa in queixas
-					li(style='margin-bottom: 10px; border: 1px solid #CCA300')
-						a(href='/queixinhas/#{queixa.id}') #{queixa.titulo}
-						+like(queixa)
+					if !queixa.fechada
+						li(style='margin-bottom: 10px; border: 1px solid #CCA300')
+							a(href='/queixinhas/#{queixa.id}') #{queixa.titulo}
+							+like(queixa)
 			else
 				li ainda ninguem se queixou				
 mixin like(queixa)

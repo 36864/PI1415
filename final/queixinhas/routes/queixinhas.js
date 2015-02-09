@@ -182,7 +182,6 @@ router.post('/:id/edit', function(req, res, next) {
 				if(err) return next(err);
 			});
 			var commenttext = 'Esta queixinha foi editada por '+user.username;
-			if(req.body.comment.length) commenttext += ': ' + req.body.comment;
 			var comment = {idqueixinha: queixa.id, comentario:commenttext, username:user.username};
 			db.newComment(comment, function(err){
 				if(err) return next(err);

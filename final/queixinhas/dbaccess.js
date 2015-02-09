@@ -47,7 +47,7 @@ access.votacao = function votacao(queixinha, voto)
 access.getQueixinhas = function (page, cb){
 	//return lista de queixinhas, pagina page
 	var offset = (page-1) * 10;
-	db.SelectAll("SELECT id, titulo, descricao, votos_corretos, votos_incorretos, username, geo_referencia, fechada from queixinha LIMIT 10 OFFSET "+offset , 
+	db.SelectAll("SELECT id, titulo, descricao, votos_corretos, votos_incorretos, username, geo_referencia, fechada FROM queixinha ORDER BY id DESC LIMIT 10 OFFSET "+offset , 
 		function (row) {
 			return new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.votos_corretos, row.votos_incorretos,row.geo_referencia, row.fechada);
 		}, cb);

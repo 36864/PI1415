@@ -232,6 +232,13 @@ access.updatepass = function(user, cb){
        cb);
 };
 
+access.updatequeixinha = function(queixinha, cb){
+	var params = [queixinha.titulo, queixinha.descricao, queixinha.id, queixinha.georef, queixinha.fechada];
+    db.ExecuteQuery("update queixinha set titulo = $1, descricao = $2, geo_referencia = $4, fechada = $5 where id = $3",
+        params,
+       cb);
+};
+
 access.newCategoriaQueixinha = function(categoria, id, cb){
 	var params = [categoria, id];
     db.ExecuteQuery("INSERT into categoriaqueixinha(categoria, queixinha) values($1, $2)",
@@ -255,7 +262,14 @@ access.deletevoto = function(username, queixinha, cb){
 
 access.newQueixinhaUtilizador = function(username, idqueix, cb){
 	var params = [username, idqueix];
-    db.ExecuteQuery("INSERT into queixinhatilizador(username, queixinha) values($1, $2)",
+    db.ExecuteQuery("INSERT into queixinhautilizador(username, queixinha) values($1, $2)",
+        params,
+        cb);
+};
+
+access.deleteQueixinhaUtilizador = function(username, idqueix, cb){
+	var params = [username, idqueix];
+    db.ExecuteQuery("delete from queixinhautilizador where username = $1 and queixinha= $2",
         params,
         cb);
 };

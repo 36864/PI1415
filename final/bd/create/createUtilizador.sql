@@ -6,13 +6,14 @@ CREATE TABLE utilizador
 (
   username character(50) NOT NULL,
   email character(50) NOT NULL,
-  "Gestor" boolean NOT NULL,
-  hash character(128) NOT NULL,
-  salt character(128) NOT NULL,
-  CONSTRAINT utilizador_pkey PRIMARY KEY (username)
+  gestor boolean NOT NULL,
+  hash text NOT NULL,
+  salt text NOT NULL,
+  CONSTRAINT utilizador_pkey PRIMARY KEY (username),
+  CONSTRAINT unemail UNIQUE (email)
 )
 WITH (
   OIDS=FALSE
 );
 ALTER TABLE utilizador
-  OWNER TO postgres;
+  OWNER TO queixinhauser;

@@ -28,7 +28,7 @@ function cnuser (req, res, email, g) {
 		});
 		console.log('CRIOU')
 };
-console.log('AcriaR')
+
 cnuser("Pedro2","ped", "a3683@alunos.isel.pt", true);
 cnuser("Miguel2","mig", "a3686@alunos.isel.pt", true);
 cnuser("Luz2","luz", "a3691@alunos.isel.pt", true);
@@ -37,7 +37,6 @@ var q = new db.queixinha();
 q.titulo = "Trab PI";
 q.autor = "Pedro2";
 q.fechada = false;
-console.log(q)
 
 var idqueix;
 var idcategoria;
@@ -50,11 +49,11 @@ db.newQueixinha(q, function(err, id){
 
 	
 	comment = new db.comment(0, idqueix,  "Not Finished", "Miguel2");
-console.log("CMT"+comment.toString());
+
 	db.newComment(comment, function(err){
 						console.log(err);
 	comment = new db.comment(0, idqueix, "FDS","Luz2");
-	console.log("CMT"+comment.toString());
+
 	db.newComment(comment, function(err){
 						console.log(err);
 
@@ -70,7 +69,6 @@ console.log("CMT"+comment.toString());
 });
 });
 
-//console.log('Servidor');
 q.titulo = "Servidor";
 q.autor = "Miguel2";
 q.fechada = false;
@@ -81,7 +79,7 @@ db.newQueixinha(q, function(err, id){
 	console.log(err);
 
 	comment = new db.comment(0, idqueix, "FDS", "Luz2");
-	console.log("CMT"+comment.toString());
+
 	db.newComment(comment, function(err){
 						console.log(err);
 	});
@@ -91,7 +89,6 @@ db.newQueixinha(q, function(err, id){
 												});
 });
 
-//console.log('BOOTSTRAP');
 q.titulo = "BOOTSTRAP ?!! N WORK";
 q.autor = "Luz2";
 q.fechada = false;
@@ -101,7 +98,7 @@ db.newQueixinha(q, function(err, id){
 					console.log(err);
 
 		comment = new db.comment(0, idqueix,"FDS", "Miguel2");
-		console.log("CMT"+comment.toString());
+
 		db.newComment(comment, function(err){
 								console.log(err);
 		});

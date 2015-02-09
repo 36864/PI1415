@@ -18,8 +18,8 @@ block content
 							li
 								areatext.col-md-9 #{queixa.titulo}
 								div(style='float: right')
-									form(method='/post')
-										button.btn.minivotebtn(type='button', style='background-color: green', formaction='upvotebtn(#{queixa.id}, #{queixa.voto})') #{queixa.Votos_Corretos}
-										button.btn.minivotebtn(type='button', style='background-color: red', formaction='downvotebtn(#{queixa.id}, #{queixa.voto})') #{queixa.Votos_Incorretos}
+									form(name='voteform', method='/post')
+										button.btn.minivotebtn(type='button', style='background-color: green', onclick='upvotebtn(#{queixa.id}, #{queixa.voto})') #{queixa.Votos_Corretos}
+										button.btn.minivotebtn(type='button', style='background-color: red', onclick='downvotebtn(#{queixa.id}, #{queixa.voto})') #{queixa.Votos_Incorretos}
 						else
 							li ainda ninguem se queixou

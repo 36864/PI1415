@@ -8,9 +8,9 @@ block content
 				div.panel-body
 					form(action='register', method='post')
 						div(style='margin-bottom: 30px')
-							input.form-control(type='text', placeholder='Nome', name='username')
+							input.form-control(type='text', placeholder='Nome', name='username', required)
 						div(style='margin-bottom: 30px')
-							input.form-control(type='email', placeholder='Email', name='email')
+							input.form-control(type='email', placeholder='Email', name='email', required)
 						div(style='margin-bottom: 30px')
-							input.form-control(type='password', placeholder='Password', name='password')
+							input.form-control(type='password', placeholder='Password', name='password', required)
 						button(class='btn btn-success', type='submit') Confirmar

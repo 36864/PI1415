@@ -1,1 +1,16 @@
 extends layout
+
+block content
+	div.container-float
+		div.row(style='margin-top: 100px')
+			div.col-md-5
+				div.container-fluid
+					h3 Titulo
+					areatext.row(style='clear: both') #{queixa.titulo}
+					h4 Descrição
+					areatext.row(style='clear: both') #{queixa.descricao}
+					
+			div.col-md-1
+			div.col-md-5
+			
+//queixa{.comnt}, user

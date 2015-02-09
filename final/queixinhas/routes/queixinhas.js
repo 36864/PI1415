@@ -209,10 +209,11 @@ router.post('/:id/unvote', function(req, res, next) {
 					console.log(err);
 					return next(err);
 				}
+				return res.end();
 			});
 		});
 	});
-	res.end();
+	return res.end();
 });
 
 router.post('/:id/subscribe', function(req, res, next) {

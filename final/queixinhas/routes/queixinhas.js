@@ -284,7 +284,7 @@ router.post('/:id/comment', function(req, res, next) {
 			db.newComment(comment, function(err){
 				if(err) return next(err);
 			});
-			
+			res.redirect('back');
 		});
 	});
 });

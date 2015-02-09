@@ -139,7 +139,7 @@ access.isfollowing = function(username, id, cb){
 };
 
 access.getQueixinhasbyIntUser = function (username, cb){
-	db.SelectSome("SELECT id, titulo, descricao,username, votos_incorretos,votos_corretos, geo_referencia, fechada from queixinha inner join categoriaqueixinha on (id = queixinha) where username = $1", 
+	db.SelectSome("SELECT id, titulo, descricao, queixinha.username, votos_incorretos,votos_corretos, geo_referencia, fechada from queixinha inner join queixinhautilizador on (id = queixinha) where queixinha.username = $1", 
 		[username],
 		function (row) {
 			var queix = new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.votos_corretos,row.votos_incorretos,row.geo_referencia, row.fechada);

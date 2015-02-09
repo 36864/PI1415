@@ -67,7 +67,7 @@ router.post('/new', function(req, res, next) {
 	var queixa = {
 		titulo: req.body.title, 
 		descricao: req.body.desc,
-		autor: req.user,
+		autor: req.user.username,
 		georef: req.body.geo,
 		categorias: req.body.categorias
 		};

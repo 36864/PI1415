@@ -41,7 +41,7 @@ access.categoria = function categoria(designacao)
 access.getQueixinhas = function (page, cb){
 	//return lista de queixinhas, pagina page
 	var offset = (page-1) * 10;
-	db.SelectAll("SELECT id, titulo, descricao, votos_corretos, votos_incorretos, username, geo_referencia, fechada from queixinha LIMIT 10 OFFSET "+offset, 
+	db.SelectAll("SELECT id, titulo, descricao, votos_corretos, votos_incorretos, username, geo_referencia, fechada from queixinha LIMIT 10 OFFSET "+offset , 
 		function (row) {
 			return new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.votos_corretos, row.votos_incorretos,row.geo_referencia, row.fechada);
 		}, cb);
@@ -209,6 +209,13 @@ access.newUser = function(user, cb){
 access.newCategoria = function(designacao, cb){
 	var params = [designacao];
     db.ExecuteQuery("INSERT into categoria(designacao) values($1)",
+        params,
+       cb);
+};
+
+access.updatepass = function(user, cb){
+	var params = [user.hash, user.salt, user.username];
+    db.ExecuteQuery("update utilizador set hash = $1, salt = $2 where username = $3",
         params,
        cb);
 };

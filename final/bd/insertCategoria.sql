@@ -6,5 +6,3 @@ INSERT INTO "Categoria"( designacao)
     VALUES ( 'SI2');
 INSERT INTO "Categoria"( designacao)
     VALUES ( 'Basquetebol');
-
-

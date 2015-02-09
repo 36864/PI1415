@@ -178,7 +178,7 @@ router.post('/:id/edit', function(req, res, next) {
 			if(queixa.descricao === '') {
 				queixa.descricao = null;
 			}
-			db.updatequeixinha(queixa, user, function(err){
+			db.updatequeixinha(queixa, function(err){
 				if(err) return next(err);
 			});
 			var commenttext = 'Esta queixinha foi editada por '+user.username;

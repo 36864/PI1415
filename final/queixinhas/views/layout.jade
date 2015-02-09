@@ -21,6 +21,19 @@ html
 			padding-left: 5px;
 			color: white;
 			}
+		script.
+			function upvotebtn(id, voto){
+				if voto === 0
+					return '/'+id+'/upvote'
+				if voto === 1
+					return '/'+id+'/unvote'
+			}
+			function downvotebtn(id, voto){
+				if voto === 0
+					return '/'+id+'/downvote'
+				if voto === -1
+					return '/'+id+'/unvote'
+			}
 	body
 		//header
 		nav.navbar.navbar-fixed-top.row(style='background-color: lightblue; height: 20px')

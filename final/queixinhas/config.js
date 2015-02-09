@@ -3,7 +3,17 @@ var configs = {
         getConnString: function()
         {
             return "postgres://queixinhauser:queixinhas2015@localhost/queixinhadb";
-        }
+        },
+		getEmailInfo: function()
+		{
+			return {
+				service: 'Gmail',
+				auth: {
+					user: 'pi1415i.li51d.g13@gmail.com ',
+					pass: 'queixinha'
+				}
+			}
+		}
     }
 }
 

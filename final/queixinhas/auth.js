@@ -91,7 +91,7 @@ module.exports = function(app)
 		}
 		db.getUserbyEmail(req.body.email, function(err, user){
 			if(err) return res.render('recover', {erro: 'Utilizador our Email invalido'});
-			var password = crypto.randomBytes(8);
+			var password = crypto.randomBytes(8).toString('base64');
 			pass.hash(password, function(err, salt, hash){
 				if(err) return next(err);
 				user.salt = salt;

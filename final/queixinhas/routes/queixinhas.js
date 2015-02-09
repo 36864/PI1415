@@ -194,6 +194,25 @@ router.post('/:id/upvote', function(req, res, next) {
 });
 
 router.post('/:id/unvote', function(req, res, next) {
+	db.getUser(req.user.username, function(err, user){
+		if(err){
+			console.log(err);
+			return next(err);
+		}
+		db.getQueixinha(req.params.id, function(err, queixa){
+			if(err){
+				console.log(err);
+				return next(err);
+			}
+			db.deletevoto(user.username, queixa.id, function(err){
+				if(err) {
+					console.log(err);
+					return next(err);
+				}
+			});
+		});
+	});
+	res.end();
 });
 
 router.post('/:id/subscribe', function(req, res, next) {

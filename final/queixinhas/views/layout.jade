@@ -5,24 +5,40 @@ html
 		link(rel='stylesheet', href='/stylesheets/style.css')
 		link(rel='stylesheet', href='/css/bootstrap.css')
 		script(src='/js/bootstrap.js')
+		style.
+			button.mybutton{
+				border-radius: 10px
+			}
 	body
-		nav.navbar-fixed-top(style='background-color: lightblue')
-			div.container
-				div.navbar-header
-					button.navbar-toggle(type='button')
-					a(class='navbar-brand', href='/', style='color: black')= title
-				div.navbar-form.navbar-right
-					form(action='/login', method='post')
-						div.form-group
-							input.form-control(type='text', placeholder='Nome', name='username')
-						div.form-group
-							input.form-control(type='password', placeholder='Password', name='password')
-						button(class='btn btn-default', type='submit') Entrar
-						a(class='btn btn-success', href='/register', role='button', style='margin-left: 50px') Registar
+		div.container
+			div.container.row
+				nav.navbar.navbar-fixed-top.row(style='background-color: lightblue; height: 20px')
+					div.container
+						div.navbar-header
+							button.navbar-toggle(type='button')
+							a(class='navbar-brand', href='/', style='color: black')= title
+						div.navbar-form.navbar-right
+							if !user.username
+								form(action='/login', method='post')
+									div.form-group
+										input.form-control(type='text', placeholder='Nome', name='username')
+									div.form-group
+										input.form-control(type='password', placeholder='Password', name='password')
+									button(class='btn btn-default', type='submit') Entrar
+									a(class='btn btn-success', href='/register', role='button', style='margin-left: 50px') Registar
+								a(class ='btn', href='/recover') Esqueceu a sua password?
+							else
+								form(action='/logout', method='post')
+									p(style='display: inline') Bem-Vindo #{user.username}
+									div.form-group
+										button.mybutton(class='btn btn-default') Sair
+						
+			div.container.row
+				p Hello
 						
 		block content
 		
 		//div.container
-			//footer(style='position: absolute; bottom: 0px; width: 100%; float: center')
+			//footer(style='position: absolute; bottom: 0px; width: 100%; align: center')
 				//div.container
 					//p Copyright by Miguel Serejo, Pedro Duarte & André Luz

@@ -22,27 +22,42 @@ router.get('/', function(req, res, next) {
 		if(req.user.username)
 			page = req.query.page;
 	}
+	console.log('getting list');
 	db.getQueixinhas(page, function(err, queixas){		
 		if(err) {
 			if(err.message !== 'RECORD NOT FOUND')
 				return next(err);
 		}
+		console.log('got list');
 		db.getUser(req.user.username, function(err, user){
 			if(err) {
 				if(err.message !== 'RECORD NOT FOUND')
 					return next(err);
 			}
+			console.log('got user');
 			db.getCountQueixinhas(function(err, count) {
 				count = Math.ceil(count/10);
-				if(count > 0 && user.username){
+				console.log(count);
+				if(count > 0 && req.user.username){
 					db.getvotobyuser(user.username, function(err, votos){
-						queixas.forEach(function(value){
-							var voto = votos.find(function(voto){
+							if(err) {
+								if(err.message !== 'RECORD NOT FOUND')
+									return next(err);
+							}
+							queixas.forEach(function(value){
+								if(!votos) {
+									value.voto = 0;								
+								}
+								else{
+									console.log(votos);
+									var voto = votos.find(function(voto){
 										return this.id===voto.queixinha;								
-										}, value);
-							if(voto) queixas.voto = voto;
-							else queixas.voto = 0;
-						});
+									}, value);
+									console.log(voto);
+									if(voto) value.voto = voto;
+									else value.voto = 0;
+								}
+							});
 						return res.render('queixinhas', {queixas: queixas, user:req.user, page:page, total:count});
 					});
 				}
@@ -174,6 +189,9 @@ router.post('/:id/upvote', function(req, res, next) {
 			});
 		});
 	});
+});
+
+router.post('/:id/unvote', function(req, res, next) {
 });
 
 router.post('/:id/subscribe', function(req, res, next) {

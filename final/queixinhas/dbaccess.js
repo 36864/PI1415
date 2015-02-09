@@ -41,7 +41,7 @@ access.categoria = function categoria(designacao)
 access.getQueixinhas = function (page, cb){
 	//return lista de queixinhas, pagina page
 	var offset = (page-1) * 10;
-	db.SelectAll("SELECT id, titulo, descricao, votos_corretos, votos_incorretos, username, geo_referencia, fechada from queixinha LIMIT 10 OFFSET "+offset, 
+	db.SelectAll("SELECT id, titulo, descricao, votos_corretos, votos_incorretos, username, geo_referencia, fechada from queixinha LIMIT 10 OFFSET "+offset , 
 		function (row) {
 			return new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.votos_corretos, row.votos_incorretos,row.geo_referencia, row.fechada);
 		}, cb);
@@ -213,9 +213,23 @@ access.newCategoria = function(designacao, cb){
        cb);
 };
 
+access.updatepass = function(user, cb){
+	var params = [user.hash, user.salt, user.username];
+    db.ExecuteQuery("update utilizador set hash = $1, salt = $2 where username = $3",
+        params,
+       cb);
+};
+
 access.newCategoriaQueixinha = function(categoria, id, cb){
 	var params = [categoria, id];
     db.ExecuteQuery("INSERT into categoriaqueixinha(categoria, queixinha) values($1, $2)",
+        params,
+        cb);
+};
+
+access.newvoto = function(username, queixinha,voto, cb){
+	var params = [username, queixinha, voto];
+    db.ExecuteQuery("INSERT into votacao(username, id_queixinha,correta) values($1, $2,$3)",
         params,
         cb);
 };

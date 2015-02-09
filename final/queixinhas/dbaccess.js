@@ -33,9 +33,8 @@ access.comment = function comentario(id, idqueixinha, comentario, username)
 	this.username = username;
 }
 
-access.categoria = function categoria(id, designacao)
+access.categoria = function categoria(designacao)
 {
-	this.id = id;
 	this.designacao = designacao;
 }
 
@@ -119,19 +118,14 @@ access.getQueixinhasUtilizador =function (username, cb){
 }
 
 access.getQueixinhasbyIntUser = function (username, cb){
-	//var index = 0;
 	db.SelectSome("SELECT id, titulo, descricao,username, votos_incorretos,votos_corretos, geo_referencia, fechada from queixinha inner join categoriaqueixinha on (id = queixinha) where username = $1", 
 		[username],
 		function (row) {
-			//var categorias =[];
 			var queix = new access.queixinha(row.id, row.titulo, row.descricao, row.username, row.votos_corretos,row.votos_incorretos,row.geo_referencia, row.fechada);
 			access.getCategoriaQueixinha(row.id, function(err, catgs){
-					// categorias[index++] = c;
-					if(!err){
-						//categorias = c;					
+					if(!err){				
 						queix.categorias = catgs;
 					}}, cb);
-					//queix.categorias = categorias;
 			return queix;
 		}, cb);
 }
@@ -206,45 +200,42 @@ access.newUser = function(user, cb){
         params,
         function(err) { 
         	if (err)
-        		return cb(err, null)
+        		return cb(err);
 
-        	cb(null, user);
+        	return cb(null, user);
         });
 };
 
 access.newCategoria = function(designacao, cb){
 	var params = [designacao];
-    db.ExecuteQuery("INSERT into categoria(designacao) values($1) returning id",
+    db.ExecuteQuery("INSERT into categoria(designacao) values($1)",
         params,
-        function(err, id) { 
-        	if (err)
-        		cb(err, null);
-        	cb(null, new access.categoria(id, designacao)); 
-        }
-    );
+       cb);
 };
 
 access.newCategoriaQueixinha = function(categoria, id, cb){
 	var params = [categoria, id];
     db.ExecuteQuery("INSERT into categoriaqueixinha(categoria, queixinha) values($1, $2)",
         params,
-        function(err) { 
-        	if (err)
-        		cb(err, null);
-        	cb(null, id);
-        }
-    );
+        cb);
+};
+
+access.newQueixinhaUtilizador = function(username, idqueix, cb){
+	var params = [username, idqueix];
+    db.ExecuteQuery("INSERT into queixinhatilizador(username, queixinha) values($1, $2)",
+        params,
+        cb);
 };
 
 access.newComment = function(coment, cb){
 	var params = [coment.idqueixinha, coment.comentario, coment.username];
-	db.ExecuteQuery("INSERT into comentario(id_queixinha, comentario, username) values($1, $2, $3)",
+	db.ExecuteQuery("INSERT into comentario(id_queixinha, comentario, username) values($1, $2, $3) returning id",
         params,
-        function(err) { 
+        function(err, id) { 
         	if (err)
         		return cb(err, null)
-
-        	cb(null, coment);
+        	coment.id = id;
+        	return cb(null, coment);
         });
 };
 

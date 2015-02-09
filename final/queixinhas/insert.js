@@ -29,11 +29,10 @@ function cnuser (req, res, email, g) {
 		console.log('CRIOU')
 };
 console.log('AcriaR')
-/*cnuser("Pedro2","ped", "a36832@alunos.isel.pt", true);
-cnuser("Miguel2","mig", "a36864@alunos.isel.pt", true);
-cnuser("Luz2","Luz2", "a36919@alunos.isel.pt", true);*/
+cnuser("Pedro2","ped", "a3683@alunos.isel.pt", true);
+cnuser("Miguel2","mig", "a3686@alunos.isel.pt", true);
+cnuser("Luz2","luz", "a3691@alunos.isel.pt", true);
 
-//console.log('Trab PIIIIIIIIIIIIIIIII');
 var q = new db.queixinha();
 q.titulo = "Trab PI";
 q.autor = "Pedro2";

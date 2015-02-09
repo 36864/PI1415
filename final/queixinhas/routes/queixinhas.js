@@ -83,7 +83,7 @@ router.get('/dashboard', function(req, res, next) {
 			}
 			console.log(queixasbyuser)
 			console.log(interest);
-			return res.render('dashboard', {user: req.user, queixasUser : queixasbyuser, queixasInterested:interest});
+			return res.render('dashboard', {user: req.user, queixasuser:queixasbyuser, queixasinterested:interest});
 		});	
 	});
 });

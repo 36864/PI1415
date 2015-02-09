@@ -119,7 +119,8 @@ router.get('/:id', function(req, res, next) {
 		if(err && err.message !== 'RECORD NOT FOUND') return next(err);
 		db.getQueixinha(req.params.id, function(err, queixa){
 			if(err && err.message !== 'RECORD NOT FOUND') return res.redirect('/queixinhas');
-			return res.render('queixinha', {queixinha: queixa, user: user});
+		
+			return res.render('queixinha', {queixa: queixa, user: user});
 		});
 	});
 });
@@ -132,7 +133,7 @@ router.get('/:id/edit', function(req, res, next) {
 		if(err) return next(err);
 		db.getUser(req.user.username, function(err, user){
 			if(err) return next(err);
-			return res.render('/edit', {queixinha:queixa, user:user});
+			return res.render('/edit', {queixa:queixa, user:user});
 		});
 	});
 });

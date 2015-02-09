@@ -119,6 +119,9 @@ router.post('/new', function(req, res, next) {
 	if(queixa.titulo === '') {
 		return res.redirect('back');
 	}
+	if(queixa.descricao === '') {
+		queixa.descricao = null;
+	}
 	console.log(queixa);
 	db.newQueixinha(queixa, function(err, queixa) {
 			if(err) return next(err);
@@ -171,7 +174,11 @@ router.post('/:id/edit', function(req, res, next) {
 			queixa.descricao = queixaEdit.descricao;
 			queixa.categorias = queixaEdit.categorias;
 			queixa.fechada = queixaEdit.fechada;
-			db.editQueixinha(queixa, user, function(err){
+			
+			if(queixa.descricao === '') {
+				queixa.descricao = null;
+			}
+			db.updatequeixinha(queixa, user, function(err){
 				if(err) return next(err);
 			});
 			var commenttext = 'Esta queixinha foi editada por '+user.username;
@@ -284,7 +291,7 @@ router.post('/:id/comment', function(req, res, next) {
 			db.newComment(comment, function(err){
 				if(err) return next(err);
 			});
-			res.redirect('back');
+			return res.redirect('back');
 		});
 	});
 });

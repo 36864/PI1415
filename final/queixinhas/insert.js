@@ -1,5 +1,5 @@
-var db = require('./dbaccess');
 var pass = require('pwd');
+var http = require('http')
 
 function cnuser (req, res, email, g) {
 		var user = new db.user();
@@ -57,14 +57,6 @@ db.newQueixinha(q, function(err, id){
 	db.newComment(comment, function(err){
 						console.log(err);
 
-		db.newCategoria("PI", function(err, id){
-				idcategoria = id;
-				console.log(err);
-
-				db.newCategoriaQueixinha(idcategoria, idqueix, function(err){
-													console.log(err)
-												});
-		});
 	});
 });
 });

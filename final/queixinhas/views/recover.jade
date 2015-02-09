@@ -8,5 +8,7 @@ block content
 				div.panel-body
 					form(action='/recover', method='post')
 						div(style='margin-bottom: 30px')
+							input.form-control(type='text', placeholder='Nome', name='username')
+						div(style='margin-bottom: 30px')
 							input.form-control(type='email', placeholder='Email', name='email')
 						button(class='btn btn-success', type='submit') Confirmar

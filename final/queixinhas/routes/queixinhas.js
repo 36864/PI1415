@@ -40,23 +40,31 @@ router.get('/', function(req, res, next) {
 				console.log(count);
 				if(count > 0 && req.user.username){
 					db.getvotobyuser(user.username, function(err, votos){
+						if(err) {
+							if(err.message !== 'RECORD NOT FOUND')
+								return next(err);
+						}
+						db.getQueixinhasbyIntUser(user.username, function(err, interested){
 							if(err) {
 								if(err.message !== 'RECORD NOT FOUND')
 									return next(err);
-							}
-							queixas.forEach(function(value){
-								if(!votos) {
-									value.voto = 0;								
+							}						
+							queixas.forEach(function(queixa){
+								queixa.voto = 0;
+								queixa.isfollowing = false;
+								if(votos) {
+									 votos.forEach(function(voto){										
+										if(queixa.id === voto.queixinha)
+											queixa.voto = voto.voto;
+									});
 								}
-								else{
-									console.log(votos);
-									var voto = votos.find(function(voto){
-										return this.id===voto.queixinha;								
-									}, value);
-									console.log(voto);
-									if(voto) value.voto = voto;
-									else value.voto = 0;
+								if (interested){
+									interested.forEach(function(following){
+										if(following.id === queixa.id)
+											queixa.isfollowing = true;
+									});
 								}
+							});
 							});
 						return res.render('queixinhas', {queixas: queixas, user:req.user, page:page, total:count});
 					});
@@ -81,8 +89,12 @@ router.get('/dashboard', function(req, res, next) {
 				if(err.message !== 'RECORD NOT FOUND')
 				return next(err);
 			}
-			console.log(queixasbyuser)
-			console.log(interest);
+			queixasbyuser.forEach(function(value){
+				value.isfollowing = true;
+			});
+			interest.forEach(function(value){
+				value.isfollowing = true;
+			});
 			return res.render('dashboard', {user: req.user, queixasuser:queixasbyuser, queixasinterested:interest});
 		});	
 	});

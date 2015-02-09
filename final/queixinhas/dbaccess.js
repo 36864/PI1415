@@ -234,6 +234,13 @@ access.newvoto = function(username, queixinha,voto, cb){
         cb);
 };
 
+access.deletevoto = function(username, queixinha, cb){
+	var params = [username, queixinha];
+    db.ExecuteQuery("delete from votacao where username= $1 and id_queixinha = $2",
+        params,
+        cb);
+};
+
 access.newQueixinhaUtilizador = function(username, idqueix, cb){
 	var params = [username, idqueix];
     db.ExecuteQuery("INSERT into queixinhatilizador(username, queixinha) values($1, $2)",

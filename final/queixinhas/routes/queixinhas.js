@@ -103,8 +103,8 @@ router.post('/new', function(req, res, next) {
 		categorias: req.body.categorias
 		};
 	if(queixa.titulo === '') {
-		res.flash('Título não pode ser vazio');
-		return res.render('novaqueixinha', {user: user, queixa: queixa});
+		res.flash('Título não pode ser vazio');		
+		return res.redirect('back');
 	}
 	console.log(queixa);
 	db.newQueixinha(queixa, function(err, queixa) {
@@ -140,8 +140,9 @@ router.get('/:id/edit', function(req, res, next) {
 
 router.post('/:id/edit', function(req, res, next) {
 	db.getQueixinha(req.params.id, function(err, queixa) {
+		if(err) return next(err);
 		db.getUser(req.user.username, function(err, user) {
-			if(!user.gestor && queixa.autor !== req.user.username) return res.redirect('/' + req.params.id);
+			if(!user.gestor && queixa.autor !== req.user.username) return res.redirect('back');
 			var queixaEdit = new db.queixinha(null, req.body.title, req.body.desc, req.user, null, null, req.body.geo, null, req.body.categorias, req.body.closed);
 			if(queixaEdit.titulo = "") {
 				res.flash('Título não pode ser vazio');
@@ -151,8 +152,16 @@ router.post('/:id/edit', function(req, res, next) {
 			queixa.descricao = queixaEdit.descricao;
 			queixa.categorias = queixaEdit.categorias;
 			queixa.fechada = queixaEdit.fechada;
-			db.editQueixinha(queixa, req.body.comment, user);
-			return res.redirect('/' + queixa.id);
+			db.editQueixinha(queixa, user, function(err){
+				if(err) return next(err);
+			});
+			var commenttext = 'Esta queixinha foi editada por '+user.username;
+			if(req.body.comment.length) commenttext += ': ' + req.body.comment;
+			var comment = {idqueixinha: queixa.id, comentario:commenttext, username:user.username};
+			db.newComment(comment, function(err){
+				if(err) return next(err);
+			});
+			return res.redirect('back');
 		});
 	});
 });
@@ -217,11 +226,29 @@ router.post('/:id/unvote', function(req, res, next) {
 });
 
 router.post('/:id/subscribe', function(req, res, next) {
-	
+	db.getUser(req.user.username, function(err, user){
+		if(err) return next(err);
+		db.getQueixinha(req.params.id, function(err, queixa){
+			if(err) return next(err);
+			db.deleteQueixinhaUtilizador(user.username, req.params.id, function(err){
+				if(err) return next(err);
+				return res.redirect('back');
+			});
+		});
+	});
 });
 
 router.post('/:id/unsubscribe', function(req, res, next) {
-	
+	db.getUser(req.user.username, function(err, user){
+		if(err) return next(err);
+		db.getQueixinha(req.params.id, function(err, queixa){
+			if(err) return next(err);
+			db.newQueixinhaUtilizador(user.username, req.params.id, function(err){
+				if(err) return next(err);
+				return res.redirect('back');
+			});
+		});
+	});
 });
 
 router.post('/:id/comment', function(req, res, next) {
@@ -232,7 +259,14 @@ router.post('/:id/comment', function(req, res, next) {
 		if(req.body.comment === '') {
 			return res.render('/:id/', {user: user, error:'Comentário não pode ser vazio'});
 		}
-		
+		db.getQueixinha(req.params.id, function(err, queixa){
+			if(err) return(err);
+			var comment = {idqueixinha:req.params.id, comentario:req.body.comment, username:user.username};
+			db.newComment(comment, function(err){
+				if(err) return next(err);
+			});
+			
+		});
 	});
 });
 

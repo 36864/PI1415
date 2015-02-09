@@ -188,7 +188,7 @@ access.newQueixinha = function(queixinha, cb){
     					}); 
         		}	
         	}
-        	queixinha.id = id;
+        	queixinha.id = id.id;
         	return cb(null, queixinha);
     });    
 };

@@ -61,7 +61,9 @@ router.get('/', function(req, res, next) {
 						return res.render('queixinhas', {queixas: queixas, user:req.user, page:page, total:count});
 					});
 				}
-				return res.render('queixinhas', {queixas: queixas, user:req.user, page:page, total:count});
+				else{
+					return res.render('queixinhas', {queixas: queixas, user:req.user, page:page, total:count});
+				}
 			});
 		});
 	});

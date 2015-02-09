@@ -47,7 +47,9 @@ router.get('/', function(req, res, next) {
 						return res.render('index', {queixas: queixas, user:req.user});
 					});
 				}
-				return res.render('index', {queixas: queixas, user:req.user});
+				else{				
+					return res.render('index', {queixas: queixas, user:req.user});
+				}
 			});
 		});
 	});

@@ -119,8 +119,11 @@ router.get('/:id', function(req, res, next) {
 		if(err && err.message !== 'RECORD NOT FOUND') return next(err);
 		db.getQueixinha(req.params.id, function(err, queixa){
 			if(err && err.message !== 'RECORD NOT FOUND') return res.redirect('/queixinhas');
-		
-			return res.render('queixinha', {queixa: queixa, user: user});
+			db.isfollowing(user.username, queixa.id, function(err){
+				if(!err) queixa.isfollowing = true;
+				else queixa.isfollowing = false;					
+				return res.render('queixinha', {queixa: queixa, user: user});
+			});
 		});
 	});
 });

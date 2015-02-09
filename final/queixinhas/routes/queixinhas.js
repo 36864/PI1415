@@ -103,7 +103,6 @@ router.post('/new', function(req, res, next) {
 		categorias: req.body.categorias
 		};
 	if(queixa.titulo === '') {
-		res.flash('Título não pode ser vazio');		
 		return res.redirect('back');
 	}
 	console.log(queixa);
@@ -145,8 +144,7 @@ router.post('/:id/edit', function(req, res, next) {
 			if(!user.gestor && queixa.autor !== req.user.username) return res.redirect('back');
 			var queixaEdit = new db.queixinha(null, req.body.title, req.body.desc, req.user, null, null, req.body.geo, null, req.body.categorias, req.body.closed);
 			if(queixaEdit.titulo = "") {
-				res.flash('Título não pode ser vazio');
-				return res.render('/' + req.params.id + '/edit', {user: user, queixa: queixa});
+				return res.render('back');
 			}
 			queixa.titulo = queixaEdit.titulo;
 			queixa.descricao = queixaEdit.descricao;

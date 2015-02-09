@@ -54,8 +54,7 @@ module.exports = function(app)
 	app.post('/register', function (req, res, next) {
 		if(req.user.username) return res.redirect('/');
 		if(req.body.username === '' || req.body.password === '' || req.body.email === '') {
-			res.flash('Please fill out all fields');
-			return res.render('/register', {username: req.body.username, password:req.body.password, email:req.body.email});
+			return res.redirect('back');
 		}
 		
 		var user = new db.user();

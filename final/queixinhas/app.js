@@ -4,7 +4,6 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var flash = require('./flash');
 var passport = require('passport');
 var session = require('express-session');
 var auth = require('./auth');
@@ -30,7 +29,6 @@ app.use(session({ secret: 'secret',
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(flash(app));
 
 app.locals.title = "Queixinhas na Net";
 

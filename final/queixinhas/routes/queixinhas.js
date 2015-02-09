@@ -22,31 +22,48 @@ router.get('/', function(req, res, next) {
 		if(req.user.username)
 			page = req.query.page;
 	}
+	console.log('getting list');
 	db.getQueixinhas(page, function(err, queixas){		
 		if(err) {
 			if(err.message !== 'RECORD NOT FOUND')
 				return next(err);
 		}
+		console.log('got list');
 		db.getUser(req.user.username, function(err, user){
 			if(err) {
 				if(err.message !== 'RECORD NOT FOUND')
 					return next(err);
 			}
+			console.log('got user');
 			db.getCountQueixinhas(function(err, count) {
 				count = Math.ceil(count/10);
-				if(count > 0 && user.username){
+				console.log(count);
+				if(count > 0 && req.user.username){
 					db.getvotobyuser(user.username, function(err, votos){
-						queixas.forEach(function(value){
-							var voto = votos.find(function(voto){
+							if(err) {
+								if(err.message !== 'RECORD NOT FOUND')
+									return next(err);
+							}
+							queixas.forEach(function(value){
+								if(!votos) {
+									value.voto = 0;								
+								}
+								else{
+									console.log(votos);
+									var voto = votos.find(function(voto){
 										return this.id===voto.queixinha;								
-										}, value);
-							if(voto) queixas.voto = voto;
-							else queixas.voto = 0;
-						});
+									}, value);
+									console.log(voto);
+									if(voto) value.voto = voto;
+									else value.voto = 0;
+								}
+							});
 						return res.render('queixinhas', {queixas: queixas, user:req.user, page:page, total:count});
 					});
 				}
-				return res.render('queixinhas', {queixas: queixas, user:req.user, page:page, total:count});
+				else{
+					return res.render('queixinhas', {queixas: queixas, user:req.user, page:page, total:count});
+				}
 			});
 		});
 	});
@@ -174,6 +191,29 @@ router.post('/:id/upvote', function(req, res, next) {
 			});
 		});
 	});
+});
+
+router.post('/:id/unvote', function(req, res, next) {
+	db.getUser(req.user.username, function(err, user){
+		if(err){
+			console.log(err);
+			return next(err);
+		}
+		db.getQueixinha(req.params.id, function(err, queixa){
+			if(err){
+				console.log(err);
+				return next(err);
+			}
+			db.deletevoto(user.username, queixa.id, function(err){
+				if(err) {
+					console.log(err);
+					return next(err);
+				}
+				return res.end();
+			});
+		});
+	});
+	return res.end();
 });
 
 router.post('/:id/subscribe', function(req, res, next) {

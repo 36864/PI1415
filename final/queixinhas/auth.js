@@ -51,7 +51,7 @@ module.exports = function(app)
 											  
 	app.get('/register', function (req, res, next) {
 		if(req.user.username) return res.redirect('/');
-		return res.render('register');
+		return res.render('register', {user: req.user});
 	});
 	
 	app.post('/register', function (req, res, next) {
@@ -95,6 +95,11 @@ module.exports = function(app)
 	});
 
     app.get('/logout', function(req, res, next) {
+      req.logout();
+      res.redirect('/');
+    });
+	
+	app.post('/logout', function(req, res, next) {
       req.logout();
       res.redirect('/');
     });
